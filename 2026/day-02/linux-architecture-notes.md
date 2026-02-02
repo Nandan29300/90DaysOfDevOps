@@ -160,15 +160,15 @@ Start, Stop, Restart services:
 
 -   If a service crashes, you can check it with:
 
-    systemctl status <service>
+        systemctl status <service>
 
 -   If server is slow, you can check CPU with:
 
-    top
+        top
 
 -   If a stuck program is running, you can kill it:
 
-    kill -9 <PID>
+        kill -9 <PID>
 
 → This helps you **debug real production issues.**
 
