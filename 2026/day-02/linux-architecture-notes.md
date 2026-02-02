@@ -228,3 +228,15 @@ Command:
 - Example: python app.py, sleep 100
 
 - Can be stopped with Ctrl+Z and resumed with fg
+
+
+## 11) Quick Summary Table:
+
+| Term               | Meaning (Simple)                   | Example / Command              |
+| ------------------ | ---------------------------------- | ------------------------------ |
+| systemd            | Service manager (boss of services) | PID 1, starts ssh/nginx/docker |
+| systemctl          | Command to control systemd         | `systemctl status ssh`         |
+| System service     | Managed for whole system           | ssh, nginx, docker             |
+| User service       | Managed for one user               | gnome-settings-daemon          |
+| Kernel process     | Background system thread           | [kworker/...], [kthreadd]      |
+| Foreground process | Program running in terminal        | python app.py, sleep 100       |
