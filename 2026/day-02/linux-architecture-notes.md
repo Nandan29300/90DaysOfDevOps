@@ -2,15 +2,15 @@
 
 ## 1) What is a Process? (Beginner meaning)
 
--   A **process = a running program** in Linux\
+-   A **process = a running program** in Linux
 -   Example:
-    -   When you open Chrome → a process starts\
-    -   When you run `python app.py` → a process is created\
+    -   When you open Chrome → a process starts
+    -   When you run `python app.py` → a process is created
 -   Every process has:
-    -   **PID (Process ID)** → unique number\
+    -   **PID (Process ID)** → unique number
     -   **Parent Process (PPID)** → who started it
-- PID 1 is special → it’s always the init / systemd process on modern Linux.
-- systemd manages all services
+- PID 1 is special → it’s always the **init / systemd** process on modern Linux.
+- **systemd** manages all services
 - system-level systemd - PID 1
 - user-level systemd - PID random
 
@@ -31,7 +31,7 @@ Output:
 
 ### Running (R)
 
--   The process is actively using CPU\
+-   The process is actively using CPU
 -   Example: a script doing calculations
 
 Check:
@@ -42,18 +42,31 @@ Check:
 
 ### Sleeping (S)
 
--   Process is waiting (for input, file, network, etc.)\
+-   Process is waiting (for input, file, network, etc.)
 -   Most normal processes are in **Sleeping state**
 
 Example:
 
     ps -eo pid,state,cmd | head
+    ps → list processes
+    -e → show all processes on the system
+    -o pid,state,cmd → show only these columns:
+        PID → Process ID
+        STATE → Current state of the process
+        CMD → The command/program that started the process
+    head → show only the first few lines (to make it short)
+- So this command lists first few processes with their PID, state, and command.
 - You will mostly see S.
+- S (STATE) → process is Sleeping → waiting for something (input, CPU, file, etc.)
+- I (STATE) → process is Idle → kernel worker process that is currently not active
 
 
 ### Stopped (T)
 
 -   Process is paused (not finished, just stopped)
+-   `sleep` - Purpose: Pause/wait for a certain amount of time
+-   `fg` - Resume a stopped/background process in the foreground
+-   `jobs` - listing stopped/background processes
 
 Example:
 
@@ -68,8 +81,8 @@ To resume:
 
 ### Zombie (Z)
 
--   Process is finished but still in process table\
--   Happens when parent process has not collected it\
+-   Process is finished but still in process table
+-   Happens when parent process has not collected it
 -   It is **not using CPU**, but still shown
 
 Check:
@@ -119,13 +132,13 @@ Find and kill in one command:
 
     pkill python
 
-## 5) What is systemd? (Beginner Explanation)
+## 5) What is systemd?
 
--   **systemd = service manager of Linux**\
+-   **systemd = service manager of Linux**
 -   It starts and manages background services like:
-    -   ssh\
-    -   nginx\
-    -   docker\
+    -   ssh
+    -   nginx
+    -   docker
     -   mysql
 
 ## 6) systemd -- Most Important Commands (Daily Use)
@@ -142,33 +155,24 @@ Start, Stop, Restart services:
     sudo systemctl enable nginx (Enable on boot)
 
 
-## 7) Why This is Important for DevOps (Your understanding)
+## 7) Why This is Important for DevOps
 
 -   If a service crashes, you can check it with:
 
-```{=html}
-<!-- -->
-```
     systemctl status <service>
 
 -   If server is slow, you can check CPU with:
 
-```{=html}
-<!-- -->
-```
     top
 
 -   If a stuck program is running, you can kill it:
 
-```{=html}
-<!-- -->
-```
     kill -9 <PID>
 
 → This helps you **debug real production issues.**
 
 
-## 8) Your 5 Daily Linux Commands
+## 8) 5 Daily Linux Commands
 
 1.  `ps aux` → list all processes\
 2.  `top` → check CPU & memory usage\
