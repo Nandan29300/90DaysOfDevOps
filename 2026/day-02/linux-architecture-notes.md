@@ -48,6 +48,7 @@ Check:
 Example:
 
     ps -eo pid,state,cmd | head
+    
     ps → list processes
     -e → show all processes on the system
     -o pid,state,cmd → show only these columns:
