@@ -48,15 +48,13 @@ Check:
 Example:
 
     ps -eo pid,state,cmd | head
-
-- ps → list processes
-- -e → show all processes on the system
-- -o pid,state,cmd → show only these columns:
--    PID → Process ID
--    STATE → Current state of the process
--    CMD → The command/program that started the process
-- head → show only the first few lines (to make it short)
-
+    ps → list processes
+    -e → show all processes on the system
+    -o pid,state,cmd → show only these columns:
+        PID → Process ID
+        STATE → Current state of the process
+        CMD → The command/program that started the process
+    head → show only the first few lines (to make it short)
 - So this command lists first few processes with their PID, state, and command.
 - You will mostly see S.
 - S (STATE) → process is Sleeping → waiting for something (input, CPU, file, etc.)
