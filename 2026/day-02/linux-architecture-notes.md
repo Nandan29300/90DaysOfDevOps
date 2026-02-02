@@ -203,8 +203,8 @@ Example:
 
 - Example: ssh, nginx, docker
 
-Command: 
-    systemctl status <service>
+    Command: 
+        systemctl status <service>
 
 2. User services (user-level)
 
@@ -212,8 +212,8 @@ Command:
 
 - Example: gnome-settings-daemon, xdg-desktop-portal
 
-Command: 
-    systemctl --user status
+    Command: 
+        systemctl --user status
 
 3. Kernel processes / threads
 
