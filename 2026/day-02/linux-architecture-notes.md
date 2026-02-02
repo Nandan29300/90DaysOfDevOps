@@ -10,6 +10,7 @@
     -   **PID (Process ID)** → unique number
     -   **Parent Process (PPID)** → who started it
 - PID 1 is special → it’s always the **init / systemd** process on modern Linux.
+- On modern Linux, systemd replaced the old init system
 - **systemd** manages all services
 - system-level systemd - PID 1
 - user-level systemd - PID random
@@ -179,3 +180,51 @@ Start, Stop, Restart services:
 3.  `kill -9 <PID>` → stop bad processes\
 4.  `systemctl status <service>` → check service health\
 5.  `systemctl restart <service>` → fix crashed services
+
+
+## 9) systemctl
+- systemctl = the command-line tool to talk to systemd
+- It lets you check, start, stop, restart, enable, or disable services
+
+Example:
+
+    systemctl status ssh       # Check status of ssh service
+    sudo systemctl start nginx # Start nginx
+    sudo systemctl stop nginx  # Stop nginx
+    sudo systemctl restart nginx # Restart nginx
+    sudo systemctl enable nginx # Enable nginx to start at boot
+    sudo systemctl disable nginx # Disable nginx at boot
+
+## 10) Types of Services in Linux
+
+1. System services (system-level)
+
+- Managed by systemd for the whole system
+
+- Example: ssh, nginx, docker
+
+Command: 
+    systemctl status <service>
+
+2. User services (user-level)
+
+- Managed by systemd --user for a logged-in user
+
+- Example: gnome-settings-daemon, xdg-desktop-portal
+
+Command: 
+    systemctl --user status
+
+3. Kernel processes / threads
+
+- Managed by Linux kernel, not systemd
+
+- Example: [kworker/...], [kthreadd]
+
+4. Foreground / background processes
+
+- Normal programs started by users in the shell
+
+- Example: python app.py, sleep 100
+
+- Can be stopped with Ctrl+Z and resumed with fg
