@@ -202,14 +202,16 @@ Example:
 - Managed by systemd for the whole system
 - Example: ssh, nginx, docker
 
-Command: 
+Command:
+
     systemctl status <service>
 
 2. **User services (user-level)**
 
 - Managed by systemd --user for a logged-in user
 - Example: gnome-settings-daemon, xdg-desktop-portal
-Command: 
+Command:
+
     systemctl --user status
 
 3. **Kernel processes / threads**
