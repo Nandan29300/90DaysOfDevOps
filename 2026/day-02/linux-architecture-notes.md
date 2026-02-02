@@ -197,7 +197,7 @@ Example:
 
 ## 10) Types of Services in Linux
 
-1. System services (system-level)
+1. **System services (system-level)**
 
 - Managed by systemd for the whole system
 
@@ -206,7 +206,7 @@ Example:
     Command: 
         systemctl status <service>
 
-2. User services (user-level)
+2. **User services (user-level)**
 
 - Managed by systemd --user for a logged-in user
 
@@ -215,13 +215,13 @@ Example:
     Command: 
         systemctl --user status
 
-3. Kernel processes / threads
+3. **Kernel processes / threads**
 
 - Managed by Linux kernel, not systemd
 
 - Example: [kworker/...], [kthreadd]
 
-4. Foreground / background processes
+4. **Foreground / background processes**
 
 - Normal programs started by users in the shell
 
