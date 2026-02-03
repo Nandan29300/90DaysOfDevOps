@@ -464,4 +464,3 @@ journalctl -u sshd --since "1 hour ago" | grep -i "error\|fail" | wc -l
 Runbook validated on: 2026-02-03  
 Next review date: 2026-02-10  
 Status: ACTIVE
-```
