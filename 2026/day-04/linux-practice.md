@@ -827,10 +827,9 @@ When a service fails, follow this order:
 
 ## 🚀 Next Steps
 
-1. Practice these commands on your own system
-2. Monitor a different service (try `docker`, `nginx`, or `cron`)
-3. Set up log monitoring with real-time alerts
-4. Learn about `fail2ban` to block brute-force attacks
-5. Explore `systemd` service creation (Day 05 topic!)
+1. Monitor a different service (try `docker`, `nginx`, or `cron`)
+2. Set up log monitoring with real-time alerts
+3. Learn about `fail2ban` to block brute-force attacks
+4. Explore `systemd` service creation (Day 05 topic!)
 
 ---
