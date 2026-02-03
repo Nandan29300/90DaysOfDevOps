@@ -1,399 +1,83 @@
-````md
-# 📘 Day 03 – Linux Commands Cheat Sheet  
-**File:** `linux-commands-cheatsheet.md`  
-
-> This cheat sheet is designed for **quick scanning during real troubleshooting**.  
-> Each command includes: **what it does + simple example.**
+```md
+# Linux Command Cheat Sheet (Day 03)
 
 ---
 
-# ==============================
-# 🔹 1) PROCESS MANAGEMENT
-# ==============================
+## ⚙️ PROCESS MANAGEMENT  
+**Manage system resources, view running tasks, and control process execution.**
 
-## 1. `ps`
-**What:** Show running processes (snapshot).  
-**Example:**  
-```bash
-ps -ef | head
-````
-
-## 2. `ps -eo pid,state,cmd`
-
-**What:** Custom view of processes (PID, state, command).
-
-```bash
-ps -eo pid,state,cmd | head
-```
-
-## 3. `top`
-
-**What:** Real-time process monitor.
-
-```bash
-top
-```
-
-## 4. `htop`
-
-**What:** User-friendly version of top (if installed).
-
-```bash
-htop
-```
-
-## 5. `kill`
-
-**What:** Send signal to stop a process.
-
-```bash
-kill 1234
-```
-
-## 6. `kill -9`
-
-**What:** Force kill a stuck process.
-
-```bash
-kill -9 1234
-```
-
-## 7. `pkill`
-
-**What:** Kill process by name.
-
-```bash
-pkill nginx
-```
-
-## 8. `pgrep`
-
-**What:** Find process ID by name.
-
-```bash
-pgrep nginx
-```
-
-## 9. `nice`
-
-**What:** Start a process with priority.
-
-```bash
-nice -n 10 sleep 100
-```
-
-## 10. `renice`
-
-**What:** Change priority of running process.
-
-```bash
-renice 5 -p 1234
-```
-
-## 11. `bg`
-
-**What:** Resume stopped job in background.
-
-```bash
-bg %1
-```
-
-## 12. `fg`
-
-**What:** Bring background job to foreground.
-
-```bash
-fg %1
-```
-
-## 13. `jobs`
-
-**What:** List background jobs.
-
-```bash
-jobs
-```
+| Command | Usage Example | Description |
+| :--- | :--- | :--- |
+| **`ps`** | `ps aux` | Displays a snapshot of currently running processes. |
+| **`ps -eo pid,state,cmd`** | `ps -eo pid,state,cmd` | Custom view of processes showing PID, state, and command. |
+| **`top`** | `top` | Real-time view of CPU, memory, and running processes. |
+| **`htop`** | `htop` | Interactive and user-friendly version of `top`. |
+| **`kill`** | `kill 1234` | Sends a terminate signal to process ID 1234. |
+| **`kill -9`** | `kill -9 1234` | Forcefully kills a stuck process. |
+| **`pkill`** | `pkill nginx` | Kills processes by name. |
+| **`pgrep`** | `pgrep nginx` | Finds process ID by process name. |
+| **`nice`** | `nice -n 10 sleep 100` | Starts a process with lower priority. |
+| **`renice`** | `renice 5 -p 1234` | Changes priority of a running process. |
+| **`bg`** | `bg %1` | Resumes a stopped job in the background. |
+| **`fg`** | `fg %1` | Brings a background job to the foreground. |
+| **`jobs`** | `jobs` | Lists all background jobs in the shell. |
 
 ---
 
-# ==============================
+## 📂 FILE SYSTEM  
+**Navigate directories, manipulate files, and manage permissions.**
 
-# 🔹 2) FILE SYSTEM COMMANDS
-
-# ==============================
-
-## 14. `pwd`
-
-**What:** Print current working directory.
-
-```bash
-pwd
-```
-
-## 15. `ls`
-
-**What:** List files.
-
-```bash
-ls -lh
-```
-
-## 16. `cd`
-
-**What:** Change directory.
-
-```bash
-cd /var/log
-```
-
-## 17. `cat`
-
-**What:** Show file content.
-
-```bash
-cat /etc/hostname
-```
-
-## 18. `less`
-
-**What:** View large files page by page.
-
-```bash
-less /var/log/syslog
-```
-
-## 19. `head`
-
-**What:** Show first lines of file.
-
-```bash
-head -n 10 /var/log/syslog
-```
-
-## 20. `tail`
-
-**What:** Show last lines of file.
-
-```bash
-tail -n 20 /var/log/syslog
-```
-
-## 21. `tail -f`
-
-**What:** Live log monitoring.
-
-```bash
-tail -f /var/log/syslog
-```
-
-## 22. `df -h`
-
-**What:** Disk space usage.
-
-```bash
-df -h
-```
-
-## 23. `du -sh`
-
-**What:** Folder size.
-
-```bash
-du -sh /var/log
-```
-
-## 24. `mkdir`
-
-**What:** Create directory.
-
-```bash
-mkdir my_project
-```
-
-## 25. `rm`
-
-**What:** Delete file.
-
-```bash
-rm test.txt
-```
-
-## 26. `rm -rf`
-
-**What:** Force delete directory (DANGER).
-
-```bash
-rm -rf old_backup/
-```
-
-## 27. `cp`
-
-**What:** Copy file.
-
-```bash
-cp file1.txt file2.txt
-```
-
-## 28. `mv`
-
-**What:** Move or rename file.
-
-```bash
-mv app.log app-old.log
-```
-
-## 29. `chmod`
-
-**What:** Change file permissions.
-
-```bash
-chmod 755 script.sh
-```
-
-## 30. `chown`
-
-**What:** Change file owner.
-
-```bash
-chown root:root file.txt
-```
+| Command | Usage Example | Description |
+| :--- | :--- | :--- |
+| **`pwd`** | `pwd` | Shows current working directory. |
+| **`ls`** | `ls -lah` | Lists files including hidden files with details. |
+| **`cd`** | `cd /var/log` | Changes current directory. |
+| **`cat`** | `cat file.txt` | Displays file content. |
+| **`less`** | `less /var/log/syslog` | Views large files page by page. |
+| **`head`** | `head -n 10 file.txt` | Shows first 10 lines of a file. |
+| **`tail`** | `tail -n 20 file.txt` | Shows last 20 lines of a file. |
+| **`tail -f`** | `tail -f /var/log/syslog` | Live log monitoring. |
+| **`df -h`** | `df -h` | Shows disk space usage. |
+| **`du -sh`** | `du -sh /var/log` | Shows size of a directory. |
+| **`mkdir`** | `mkdir -p /a/b/c` | Creates directory including parents. |
+| **`rm`** | `rm file.txt` | Deletes a file. |
+| **`rm -rf`** | `rm -rf backup/` | Force deletes directory (dangerous). |
+| **`cp`** | `cp -r src dest` | Copies files/directories recursively. |
+| **`mv`** | `mv old.txt new.txt` | Moves or renames files. |
+| **`chmod`** | `chmod 755 script.sh` | Changes file permissions. |
+| **`chown`** | `chown user:group file` | Changes file owner and group. |
 
 ---
 
-# ==============================
+## 🌐 NETWORKING TROUBLESHOOTING  
+**Diagnose connectivity issues, check configurations, and transfer data.**
 
-# 🔹 3) NETWORKING & TROUBLESHOOTING
-
-# ==============================
-
-## 31. `ping`
-
-**What:** Check connectivity to a host.
-
-```bash
-ping -c 4 google.com
-```
-
-## 32. `ip addr`
-
-**What:** Show IP addresses.
-
-```bash
-ip addr
-```
-
-## 33. `ip route`
-
-**What:** Show default gateway.
-
-```bash
-ip route
-```
-
-## 34. `ss -tulnp`
-
-**What:** Show listening ports & services.
-
-```bash
-ss -tulnp
-```
-
-## 35. `netstat -tulnp`
-
-**What:** Older alternative to ss.
-
-```bash
-netstat -tulnp
-```
-
-## 36. `curl`
-
-**What:** Fetch web page / API.
-
-```bash
-curl https://example.com
-```
-
-## 37. `curl -I`
-
-**What:** Get only HTTP headers.
-
-```bash
-curl -I https://example.com
-```
-
-## 38. `dig`
-
-**What:** DNS lookup.
-
-```bash
-dig google.com
-```
-
-## 39. `traceroute`
-
-**What:** Trace network path to server.
-
-```bash
-traceroute google.com
-```
+| Command | Usage Example | Description |
+| :--- | :--- | :--- |
+| **`ping`** | `ping -c 4 google.com` | Checks network connectivity. |
+| **`ip addr`** | `ip addr show` | Shows IP addresses of interfaces. |
+| **`ip route`** | `ip route` | Displays default gateway. |
+| **`ss -tulnp`** | `ss -tulnp` | Lists listening ports and services. |
+| **`netstat -tulnp`** | `netstat -tulnp` | Older version of `ss`. |
+| **`curl`** | `curl https://example.com` | Fetches data from a web server. |
+| **`curl -I`** | `curl -I https://example.com` | Fetches only HTTP headers. |
+| **`dig`** | `dig google.com` | Performs DNS lookup. |
+| **`traceroute`** | `traceroute google.com` | Traces path packets take to destination. |
 
 ---
 
-# ==============================
+## 🖥️ SYSTEM & SERVICES (DevOps Bonus)
 
-# 🔹 4) SYSTEM & SERVICE (Bonus – Useful for DevOps)
+| Command | Usage Example | Description |
+| :--- | :--- | :--- |
+| **`systemctl status`** | `systemctl status nginx` | Checks service status. |
+| **`systemctl start`** | `systemctl start nginx` | Starts a service. |
+| **`systemctl restart`** | `systemctl restart nginx` | Restarts a service. |
+| **`uptime`** | `uptime` | Shows system load and running time. |
+| **`whoami`** | `whoami` | Displays current logged-in user. |
+| **`history`** | `history | tail` | Shows previously executed commands. |
 
-# ==============================
-
-## 40. `systemctl status`
-
-**What:** Check service status.
-
-```bash
-systemctl status nginx
-```
-
-## 41. `systemctl start`
-
-**What:** Start a service.
-
-```bash
-systemctl start nginx
-```
-
-## 42. `systemctl restart`
-
-**What:** Restart service.
-
-```bash
-systemctl restart nginx
-```
-
-## 43. `uptime`
-
-**What:** Show system load & uptime.
-
-```bash
-uptime
-```
-
-## 44. `whoami`
-
-**What:** Show current user.
-
-```bash
-whoami
-```
-
-## 45. `history`
-
-**What:** Show previous commands.
-
-```bash
-history | tail
-```
+---
 
 
-```
 ```
