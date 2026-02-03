@@ -1,4 +1,4 @@
-# �� Day 04 – Linux Practice: Processes and Services
+# 📚 Day 04 – Linux Practice: Processes and Services
 
 **File:** `linux-practice.md`  
 **System:** Ubuntu 22.04 LTS  
