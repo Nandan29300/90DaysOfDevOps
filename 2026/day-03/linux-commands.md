@@ -1,5 +1,4 @@
-# Linux Command Cheat Sheet (45 Commands)
-
+# Linux Command Cheat Sheet
 ---
 
 ## ⚙️ Process Management
