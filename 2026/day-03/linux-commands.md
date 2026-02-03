@@ -84,4 +84,4 @@
 | **`systemctl restart`** | `systemctl restart nginx` | Restarts a service. |
 | **`uptime`** | `uptime` | Shows system load and uptime. |
 | **`whoami`** | `whoami` | Displays current user. |
-| **`history`** | `history | tail` | Shows previously executed commands. |
+| **`history`** | `history` | tail` | Shows previously executed commands. |
