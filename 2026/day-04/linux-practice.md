@@ -811,21 +811,6 @@ When a service fails, follow this order:
 | `tail -f /var/log/auth.log` | Follow authentication logs |
 | `grep "error" /var/log/syslog` | Search for errors in syslog |
 
----
-
-# ✅ Day 04 Completion Checklist
-
-Mark each item when completed:
-
-- [x] Ran at least **6 commands** with real output
-- [x] Included **2 process commands** (ps, top, pgrep, pstree)
-- [x] Included **2 service commands** (systemctl status, list-units)
-- [x] Included **2 log commands** (journalctl, tail)
-- [x] Picked one service (**ssh**) and inspected thoroughly
-- [x] Documented a **troubleshooting workflow**
-- [x] Added observations and analysis for each command
-- [x] Understood process states and service management
-- [x] Learned how to read and interpret logs
 
 ---
 
