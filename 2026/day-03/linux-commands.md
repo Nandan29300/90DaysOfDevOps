@@ -1,20 +1,19 @@
-```md
 # Linux Command Cheat Sheet (45 Commands)
 
 ---
 
-## ⚙️ Process Management  
+## ⚙️ Process Management
 **Manage system resources, view running tasks, and control process execution.**
 
 | Command | Usage Example | Description |
 | :--- | :--- | :--- |
 | **`ps`** | `ps aux` | Displays a detailed snapshot of all currently running processes. |
-| **`ps -eo pid,state,cmd`** | `ps -eo pid,state,cmd` | Shows selected columns of running processes. |
+| **`ps -eo`** | `ps -eo pid,state,cmd` | Shows selected columns of running processes. |
 | **`top`** | `top` | Shows real-time system statistics and processes. |
 | **`htop`** | `htop` | Interactive, colorful process viewer. |
 | **`kill`** | `kill 1234` | Terminates the process with PID 1234. |
 | **`kill -9`** | `kill -9 1234` | Forcefully kills a stuck process. |
-| **`killall`** | `killall firefox` | Kills all processes named “firefox”. |
+| **`killall`** | `killall firefox` | Kills all processes named "firefox". |
 | **`pkill`** | `pkill nginx` | Signals processes based on name. |
 | **`pgrep`** | `pgrep nginx` | Finds process ID by name. |
 | **`nice`** | `nice -n 10 sleep 100` | Starts a process with lower priority. |
@@ -25,7 +24,7 @@
 
 ---
 
-## 📂 File System  
+## 📂 File System
 **Navigate directories, manipulate files, and manage permissions.**
 
 | Command | Usage Example | Description |
@@ -53,7 +52,7 @@
 
 ---
 
-## 🌐 Networking Troubleshooting  
+## 🌐 Networking Troubleshooting
 **Diagnose connectivity issues, check configurations, and transfer data.**
 
 | Command | Usage Example | Description |
@@ -86,4 +85,3 @@
 | **`uptime`** | `uptime` | Shows system load and uptime. |
 | **`whoami`** | `whoami` | Displays current user. |
 | **`history`** | `history | tail` | Shows previously executed commands. |
-```
