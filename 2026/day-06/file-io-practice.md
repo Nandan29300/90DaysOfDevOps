@@ -10,9 +10,7 @@
 1. [Overview](#overview)
 2. [Commands Reference](#commands-reference)
 3. [Hands-On Practice](#hands-on-practice)
-4. [Command Outputs](#command-outputs)
-5. [Real-World DevOps Examples](#real-world-devops-examples)
-6. [Summary](#summary)
+4. [Summary](#summary)
 
 ---
 
