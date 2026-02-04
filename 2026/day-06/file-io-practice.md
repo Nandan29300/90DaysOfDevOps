@@ -238,6 +238,406 @@ Line 4 via tee
 
 ---
 
+### 7. Here Document (`<<EOF`) - Add Multiple Lines at Once
+
+**Definition:** A Here Document (heredoc) allows you to input multiple lines of text without using multiple echo commands. The delimiter (commonly `EOF`) marks the beginning and end of the input block.
+
+**Syntax:**
+```bash
+cat <<DELIMITER >> filename
+line 1
+line 2
+line 3
+DELIMITER
+```
+
+**Common Delimiters:**
+- `EOF` (End Of File) - most common
+- `EOL` (End Of Lines)
+- `END`
+- Any custom word you choose
+
+**How It Works:**
+1. `cat <<EOF` tells the shell to read input until it sees `EOF`
+2. All lines between the first `EOF` and the closing `EOF` are treated as input
+3. `>>` appends this input to the file
+
+**Example 1: Create File with Multiple Lines**
+```bash
+cat <<EOF > day6.txt
+cat reads full file
+head reads top lines
+tail reads bottom lines
+These skills help in DevOps
+EOF
+```
+
+**Output:**
+```bash
+# No terminal output, but file is created with 4 lines
+```
+
+**Verify:**
+```bash
+cat day6.txt
+```
+
+**Output:**
+```bash
+cat reads full file
+head reads top lines
+tail reads bottom lines
+These skills help in DevOps
+```
+
+---
+
+**Example 2: Append Multiple Lines**
+```bash
+cat <<EOF >> day6.txt
+Additional line 1
+Additional line 2
+Additional line 3
+EOF
+```
+
+**Verify:**
+```bash
+cat day6.txt
+```
+
+**Output:**
+```bash
+cat reads full file
+head reads top lines
+tail reads bottom lines
+These skills help in DevOps
+Additional line 1
+Additional line 2
+Additional line 3
+```
+
+---
+
+**Example 3: Create Configuration File**
+```bash
+cat <<EOF > app-config.yml
+server:
+  host: localhost
+  port: 8080
+database:
+  name: myapp_db
+  user: admin
+EOF
+```
+
+**Verify:**
+```bash
+cat app-config.yml
+```
+
+**Output:**
+```bash
+server:
+  host: localhost
+  port: 8080
+database:
+  name: myapp_db
+  user: admin
+```
+
+---
+
+**Example 4: Create Script File**
+```bash
+cat <<'EOF' > backup.sh
+#!/bin/bash
+echo "Starting backup..."
+tar -czf backup.tar.gz /home/user/documents
+echo "Backup completed!"
+EOF
+```
+
+**Note:** Using `<<'EOF'` (with quotes) prevents variable expansion.
+
+**Verify:**
+```bash
+cat backup.sh
+```
+
+**Output:**
+```bash
+#!/bin/bash
+echo "Starting backup..."
+tar -czf backup.tar.gz /home/user/documents
+echo "Backup completed!"
+```
+
+---
+
+**Why Use EOF?**
+
+✅ **Faster**: Write multiple lines in one command  
+✅ **Cleaner**: No need for multiple `echo` statements  
+✅ **Readable**: Better for scripts and automation  
+✅ **Preserves Formatting**: Maintains indentation and spacing  
+
+**Comparison:**
+
+**Without EOF (repetitive):**
+```bash
+echo "Line 1" >> file.txt
+echo "Line 2" >> file.txt
+echo "Line 3" >> file.txt
+echo "Line 4" >> file.txt
+```
+
+**With EOF (elegant):**
+```bash
+cat <<EOF >> file.txt
+Line 1
+Line 2
+Line 3
+Line 4
+EOF
+```
+
+---
+
+### 8. `grep` - Search Text in Files
+
+**Definition:** `grep` (Global Regular Expression Print) searches for patterns in files and displays matching lines. It's one of the most powerful text search tools in Linux.
+
+**Syntax:**
+```bash
+grep [OPTIONS] pattern filename
+```
+
+**Common Options:**
+- `-i` : Ignore case (case-insensitive search)
+- `-n` : Show line numbers
+- `-v` : Invert match (show lines that DON'T match)
+- `-c` : Count matching lines
+- `-r` : Recursive search in directories
+- `-w` : Match whole words only
+- `-A N` : Show N lines after match
+- `-B N` : Show N lines before match
+- `-C N` : Show N lines before and after match
+
+---
+
+**Example 1: Basic Search**
+```bash
+cat day6.txt | grep head
+```
+
+**Output:**
+```bash
+head reads top lines
+```
+
+**Explanation:** Filters and shows only lines containing the word "head".
+
+---
+
+**Example 2: Direct File Search (Without cat)**
+```bash
+grep head day6.txt
+```
+
+**Output:**
+```bash
+head reads top lines
+```
+
+**Note:** This is more efficient than using `cat | grep`.
+
+---
+
+**Example 3: Case-Insensitive Search**
+```bash
+grep -i DEVOPS day6.txt
+```
+
+**Output:**
+```bash
+These skills help in DevOps
+```
+
+---
+
+**Example 4: Show Line Numbers**
+```bash
+grep -n reads day6.txt
+```
+
+**Output:**
+```bash
+1:cat reads full file
+2:head reads top lines
+3:tail reads bottom lines
+```
+
+---
+
+**Example 5: Count Matches**
+```bash
+grep -c reads day6.txt
+```
+
+**Output:**
+```bash
+3
+```
+
+---
+
+**Example 6: Invert Match (Show Non-Matching Lines)**
+```bash
+grep -v reads day6.txt
+```
+
+**Output:**
+```bash
+These skills help in DevOps
+```
+
+---
+
+**Example 7: Search Multiple Patterns**
+```bash
+grep -E "head|tail" day6.txt
+```
+
+**Output:**
+```bash
+head reads top lines
+tail reads bottom lines
+```
+
+---
+
+**Example 8: Match Whole Words Only**
+```bash
+grep -w "read" day6.txt
+```
+
+**Output:**
+```bash
+# No output - because "read" appears as "reads", not as a whole word
+```
+
+```bash
+grep -w "reads" day6.txt
+```
+
+**Output:**
+```bash
+cat reads full file
+head reads top lines
+tail reads bottom lines
+```
+
+---
+
+**Example 9: Show Context (Lines Before and After)**
+```bash
+grep -C 1 "head" day6.txt
+```
+
+**Output:**
+```bash
+cat reads full file
+head reads top lines
+tail reads bottom lines
+```
+
+**Explanation:** Shows 1 line before and 1 line after the match.
+
+---
+
+**Example 10: Real-World - Search in Log Files**
+
+Create a sample log file:
+```bash
+cat <<EOF > app.log
+[2026-02-04 10:00:01] INFO: Application started
+[2026-02-04 10:00:05] DEBUG: Loading configuration
+[2026-02-04 10:00:10] ERROR: Database connection failed
+[2026-02-04 10:00:15] WARN: Retrying connection
+[2026-02-04 10:00:20] INFO: Database connected successfully
+[2026-02-04 10:00:25] ERROR: API endpoint not responding
+EOF
+```
+
+**Search for errors:**
+```bash
+grep ERROR app.log
+```
+
+**Output:**
+```bash
+[2026-02-04 10:00:10] ERROR: Database connection failed
+[2026-02-04 10:00:25] ERROR: API endpoint not responding
+```
+
+**Search for errors with line numbers:**
+```bash
+grep -n ERROR app.log
+```
+
+**Output:**
+```bash
+3:[2026-02-04 10:00:10] ERROR: Database connection failed
+6:[2026-02-04 10:00:25] ERROR: API endpoint not responding
+```
+
+**Count errors:**
+```bash
+grep -c ERROR app.log
+```
+
+**Output:**
+```bash
+2
+```
+
+---
+
+**Why grep is Essential for DevOps:**
+
+✅ **Log Analysis**: Quickly find errors in large log files  
+✅ **Debugging**: Search for specific error messages  
+✅ **Monitoring**: Filter logs for critical events  
+✅ **Configuration**: Find specific settings in config files  
+✅ **Code Review**: Search for function names or variables  
+
+---
+
+**Common grep Use Cases:**
+
+```bash
+# Find all ERROR logs
+grep ERROR /var/log/application.log
+
+# Find all failed login attempts
+grep "Failed password" /var/log/auth.log
+
+# Search recursively in all files
+grep -r "TODO" /home/user/project/
+
+# Find configuration value
+grep "port" /etc/nginx/nginx.conf
+
+# Exclude certain patterns
+grep -v "DEBUG" app.log
+
+# Case-insensitive search for errors
+grep -i error logs/*.log
+```
+
+---
+
 ## Hands-On Practice
 
 ### Step-by-Step Practice Session
@@ -324,15 +724,36 @@ Command: tail - shows last N lines
 
 ---
 
-#### Step 6: Add More Lines for Better Practice
+#### Step 6: Use EOF to Add Multiple Lines at Once
 ```bash
-echo "Command: tee - writes and displays simultaneously" >> notes.txt
-echo "Redirection: > overwrites file" >> notes.txt
-echo "Redirection: >> appends to file" >> notes.txt
-echo "These commands are essential for DevOps" >> notes.txt
+cat <<EOF >> notes.txt
+Command: tee - writes and displays simultaneously
+Redirection: > overwrites file
+Redirection: >> appends to file
+These commands are essential for DevOps
+EOF
 ```
 
-**Verify:**
+**No terminal output, verify file:**
+```bash
+cat notes.txt
+```
+
+**Expected Output:**
+```bash
+Day 06: Learning Linux File I/O
+Command: cat - displays full file content
+Command: head - shows first N lines
+Command: tail - shows last N lines
+Command: tee - writes and displays simultaneously
+Redirection: > overwrites file
+Redirection: >> appends to file
+These commands are essential for DevOps
+```
+
+---
+
+#### Step 7: View with Line Numbers
 ```bash
 cat -n notes.txt
 ```
@@ -351,7 +772,7 @@ cat -n notes.txt
 
 ---
 
-#### Step 7: Practice Reading with head
+#### Step 8: Practice Reading with head
 ```bash
 head -n 3 notes.txt
 ```
@@ -365,7 +786,7 @@ Command: head - shows first N lines
 
 ---
 
-#### Step 8: Practice Reading with tail
+#### Step 9: Practice Reading with tail
 ```bash
 tail -n 3 notes.txt
 ```
@@ -379,7 +800,82 @@ These commands are essential for DevOps
 
 ---
 
-#### Step 9: Read Middle Section
+#### Step 10: Create day6.txt with EOF Method
+```bash
+cat <<EOF > day6.txt
+cat reads full file
+head reads top lines
+tail reads bottom lines
+These skills help in DevOps
+EOF
+```
+
+**Verify:**
+```bash
+cat day6.txt
+```
+
+**Expected Output:**
+```bash
+cat reads full file
+head reads top lines
+tail reads bottom lines
+These skills help in DevOps
+```
+
+---
+
+#### Step 11: Search Text Using grep
+```bash
+grep head day6.txt
+```
+
+**Expected Output:**
+```bash
+head reads top lines
+```
+
+---
+
+#### Step 12: Search with Line Numbers
+```bash
+grep -n reads day6.txt
+```
+
+**Expected Output:**
+```bash
+1:cat reads full file
+2:head reads top lines
+3:tail reads bottom lines
+```
+
+---
+
+#### Step 13: Case-Insensitive grep
+```bash
+grep -i devops day6.txt
+```
+
+**Expected Output:**
+```bash
+These skills help in DevOps
+```
+
+---
+
+#### Step 14: Count Occurrences
+```bash
+grep -c reads day6.txt
+```
+
+**Expected Output:**
+```bash
+3
+```
+
+---
+
+#### Step 15: Read Middle Section
 ```bash
 head -n 5 notes.txt | tail -n 2
 ```
@@ -392,174 +888,26 @@ Command: tee - writes and displays simultaneously
 
 ---
 
-#### Step 10: Create Second Practice File with tee
+#### Step 16: Create Practice Log File
 ```bash
-echo "Creating file with tee" | tee practice2.txt
-echo "This writes to file AND displays on screen" | tee -a practice2.txt
-cat practice2.txt
+cat <<EOF > practice.log
+[INFO] System started
+[ERROR] Failed to connect
+[WARN] Low memory
+[INFO] Connection restored
+[ERROR] Timeout occurred
+EOF
+```
+
+**Search for errors:**
+```bash
+grep ERROR practice.log
 ```
 
 **Expected Output:**
 ```bash
-Creating file with tee
-This writes to file AND displays on screen
-Creating file with tee
-This writes to file AND displays on screen
-```
-
----
-
-## Command Outputs
-
-### Complete Practice Session Output
-
-Here's what your complete terminal session should look like:
-
-```bash
-# Create file
-$ touch notes.txt
-$ ls -l notes.txt
--rw-r--r-- 1 nandan29300 nandan29300 0 Feb 04 10:30 notes.txt
-
-# Write first line
-$ echo "Day 06: Learning Linux File I/O" > notes.txt
-
-# Add more lines
-$ echo "Command: cat - displays full file content" >> notes.txt
-$ echo "Command: head - shows first N lines" >> notes.txt
-$ echo "Command: tail - shows last N lines" | tee -a notes.txt
-Command: tail - shows last N lines
-
-$ echo "Command: tee - writes and displays simultaneously" >> notes.txt
-$ echo "Redirection: > overwrites file" >> notes.txt
-$ echo "Redirection: >> appends to file" >> notes.txt
-$ echo "These commands are essential for DevOps" >> notes.txt
-
-# Read full file
-$ cat notes.txt
-Day 06: Learning Linux File I/O
-Command: cat - displays full file content
-Command: head - shows first N lines
-Command: tail - shows last N lines
-Command: tee - writes and displays simultaneously
-Redirection: > overwrites file
-Redirection: >> appends to file
-These commands are essential for DevOps
-
-# Read with line numbers
-$ cat -n notes.txt
-     1  Day 06: Learning Linux File I/O
-     2  Command: cat - displays full file content
-     3  Command: head - shows first N lines
-     4  Command: tail - shows last N lines
-     5  Command: tee - writes and displays simultaneously
-     6  Redirection: > overwrites file
-     7  Redirection: >> appends to file
-     8  These commands are essential for DevOps
-
-# Read first 2 lines
-$ head -n 2 notes.txt
-Day 06: Learning Linux File I/O
-Command: cat - displays full file content
-
-# Read last 2 lines
-$ tail -n 2 notes.txt
-Redirection: >> appends to file
-These commands are essential for DevOps
-
-# Count lines
-$ wc -l notes.txt
-8 notes.txt
-```
-
----
-
-## Real-World DevOps Examples
-
-### Example 1: Quick Log Analysis
-
-**Scenario:** Check the last 50 lines of application logs
-
-```bash
-tail -n 50 /var/log/application.log
-```
-
-**With Live Monitoring:**
-```bash
-tail -f /var/log/application.log
-```
-
----
-
-### Example 2: Creating Configuration Files
-
-**Scenario:** Create a simple Nginx config file
-
-```bash
-cat > nginx-site.conf << EOF
-server {
-    listen 80;
-    server_name example.com;
-    
-    location / {
-        proxy_pass http://localhost:3000;
-    }
-}
-EOF
-
-cat nginx-site.conf
-```
-
----
-
-### Example 3: Appending to Build Logs
-
-**Scenario:** Log build steps while displaying them
-
-```bash
-echo "Starting build process..." | tee -a build.log
-echo "Compiling source code..." | tee -a build.log
-echo "Running tests..." | tee -a build.log
-echo "Build completed successfully!" | tee -a build.log
-```
-
----
-
-### Example 4: Extracting Specific Log Entries
-
-**Scenario:** Check first and last entries of today's logs
-
-```bash
-# First 10 entries
-head -n 10 /var/log/app-$(date +%Y-%m-%d).log
-
-# Last 10 entries
-tail -n 10 /var/log/app-$(date +%Y-%m-%d).log
-```
-
----
-
-### Example 5: Creating Deployment Notes
-
-**Scenario:** Document deployment steps
-
-```bash
-echo "=== Deployment Notes ===" > deployment.txt
-echo "Date: $(date)" >> deployment.txt
-echo "Environment: Production" >> deployment.txt
-echo "Version: v2.3.1" >> deployment.txt
-echo "Deployed by: $USER" >> deployment.txt
-
-cat deployment.txt
-```
-
-**Output:**
-```bash
-=== Deployment Notes ===
-Date: Wed Feb 04 10:30:00 UTC 2026
-Environment: Production
-Version: v2.3.1
-Deployed by: nandan29300
+[ERROR] Failed to connect
+[ERROR] Timeout occurred
 ```
 
 ---
@@ -577,6 +925,8 @@ Deployed by: nandan29300
 | `head` | Show first N lines | Preview file start |
 | `tail` | Show last N lines | Monitor logs |
 | `tee` | Write and display | Log while showing output |
+| `<<EOF` | Multi-line input | Create configs/scripts |
+| `grep` | Search text | Find patterns in files |
 
 ---
 
@@ -586,40 +936,26 @@ Deployed by: nandan29300
 2. **`cat`**: Best for small files; use `less` or `more` for large files
 3. **`head` and `tail`**: Perfect for quick file inspections
 4. **`tee`**: Essential for logging scripts while seeing output
-5. **Combination**: Commands can be piped together for powerful operations ( | )
+5. **`<<EOF`**: Makes writing multi-line content much easier and cleaner
+6. **`grep`**: The most powerful text search tool - master it for log analysis
+7. **Pipes (`|`)**: Combine commands for powerful data processing
+8. **Combination**: Commands can be piped together for powerful operations
 
 ---
 
-### Practice Challenges
+### grep Options Quick Reference
 
-Try these additional exercises:
-
-#### Challenge 1: Create a Server Log
-```bash
-echo "[$(date)] Server started" > server.log
-echo "[$(date)] Database connected" >> server.log
-echo "[$(date)] API listening on port 8080" >> server.log
-tail -n 1 server.log
-```
-
-#### Challenge 2: Extract Middle Lines
-```bash
-# Get lines 3-5 from notes.txt
-head -n 5 notes.txt | tail -n 3
-```
-
-#### Challenge 3: Count Words in File
-```bash
-cat notes.txt | wc -w
-```
-
-#### Challenge 4: Save and Display System Info
-```bash
-date | tee system-info.txt
-uptime | tee -a system-info.txt
-whoami | tee -a system-info.txt
-cat system-info.txt
-```
+| Option | Description | Example |
+|--------|-------------|---------|
+| `-i` | Case-insensitive | `grep -i error log.txt` |
+| `-n` | Show line numbers | `grep -n "failed" log.txt` |
+| `-c` | Count matches | `grep -c ERROR log.txt` |
+| `-v` | Invert match | `grep -v DEBUG log.txt` |
+| `-r` | Recursive search | `grep -r "TODO" ./src` |
+| `-w` | Whole word match | `grep -w "test" file.txt` |
+| `-A N` | N lines after | `grep -A 3 ERROR log.txt` |
+| `-B N` | N lines before | `grep -B 2 ERROR log.txt` |
+| `-C N` | N lines around | `grep -C 1 ERROR log.txt` |
 
 ---
 
@@ -628,5 +964,45 @@ cat system-info.txt
 - [GNU Coreutils Manual](https://www.gnu.org/software/coreutils/manual/)
 - [Linux Command Line Basics](https://ubuntu.com/tutorials/command-line-for-beginners)
 - [Bash Redirection Guide](https://www.gnu.org/software/bash/manual/html_node/Redirections.html)
+- [grep Manual](https://www.gnu.org/software/grep/manual/grep.html)
+- [Here Documents Guide](https://tldp.org/LDP/abs/html/here-docs.html)
+
+---
+
+## Quick Command Cheat Sheet
+
+```bash
+# File Creation
+touch file.txt                          # Create empty file
+
+# Writing
+echo "text" > file.txt                  # Overwrite
+echo "text" >> file.txt                 # Append
+
+# Multi-line Writing
+cat <<EOF >> file.txt
+line 1
+line 2
+EOF
+
+# Reading
+cat file.txt                            # Full file
+head -n 5 file.txt                      # First 5 lines
+tail -n 5 file.txt                      # Last 5 lines
+tail -f file.txt                        # Real-time monitoring
+
+# Searching
+grep "pattern" file.txt                 # Basic search
+grep -i "pattern" file.txt              # Case-insensitive
+grep -n "pattern" file.txt              # With line numbers
+grep -c "pattern" file.txt              # Count matches
+grep -v "pattern" file.txt              # Invert match
+grep -r "pattern" directory/            # Recursive
+
+# Combining Commands
+cat file.txt | grep "error"             # Search in file
+tail -f app.log | grep ERROR            # Monitor errors
+grep -i error *.log | wc -l             # Count errors across files
+```
 
 ---
