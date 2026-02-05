@@ -460,7 +460,7 @@ chmod +x /home/user/backup.sh
 
 **Alternative (more specific):**
 ```bash
-chmod u+x /home/user/backup.sh  # Execute for owner only
+chmod u+x /home/user/backup.sh  # Execute for owner only, u-user(owner), g-group, o-others, a-all
 chmod 755 /home/user/backup.sh  # rwxr-xr-x (owner full, others read+execute)
 ```
 
