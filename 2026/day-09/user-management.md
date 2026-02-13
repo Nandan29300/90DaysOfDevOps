@@ -55,7 +55,7 @@ Verify: Check `/etc/group` or use appropriate command to check group membership
 - Create `/opt/team-workspace` directory
 - Set group to `project-team`, permissions to `775`
 - Test by creating file as `nairobi`
-- Verify: Check permissions and test file creation
+- Verify: Check permissions and test file creation.
 
 ### Hints
 Stuck? Try these commands:
