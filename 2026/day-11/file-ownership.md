@@ -244,4 +244,3 @@ sudo chown :groupname file    # Change only group with chown
 
 ---
 
-<!-- Add screenshots showing ownership changes as per challenge requirements -->
