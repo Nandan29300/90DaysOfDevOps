@@ -16,6 +16,57 @@ Today you'll get hands-on experience with **Linux users, groups, and permissions
 
 ---
 
+## Challenge Tasks
+### Task 1: Create Users (20 minutes)
+Create three users with home directories and passwords:
+
+- `tokyo`
+- `berlin`
+- `professor`
+Verify: Check `/etc/passwd` and `/home/` directory
+
+### Task 2: Create Groups (10 minutes)
+Create two groups:
+
+- `developers`
+- `admins`
+Verify: Check `/etc/group`
+
+### Task 3: Assign to Groups (15 minutes)
+Assign users:
+
+- `tokyo` → `developers`
+- `berlin` → `developers` + `admins` (both groups)
+- `professor` → `admins`
+
+Verify: Check `/etc/group` or use appropriate command to check group membership
+
+### Task 4: Shared Directory (20 minutes)
+- Create directory: `/opt/dev-project`
+- Set group owner to `developers`
+- Set permissions to `775` (rwxrwxr-x)
+- Test by creating files as `tokyo` and `berlin`
+- Verify: Check permissions and test file creation
+
+### Task 5: Team Workspace (20 minutes)
+- Create user `nairobi` with home directory
+- Create group `project-team`
+- Add `nairobi` and `tokyo` to `project-team`
+- Create `/opt/team-workspace` directory
+- Set group to `project-team`, permissions to `775`
+- Test by creating file as `nairobi`
+- Verify: Check permissions and test file creation
+
+### Hints
+Stuck? Try these commands:
+
+- User: useradd, passwd, usermod
+- Group: groupadd, groups
+- Permissions: chgrp, chmod
+- Test: sudo -u username command
+- Tip: Use `-m` flag with useradd for home directory, `-aG` for adding to groups
+
+---
 ## 🚦 Commands & Example Outputs
 
 ### 1. **Create Users**
