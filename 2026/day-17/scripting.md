@@ -222,6 +222,15 @@ Script completed successfully.
 
 ---
 
+### Hints
+- For loop: for item in list; do ... done
+- While loop: while [ condition ]; do ... done
+- Arguments: $1 first arg, $# count, $@ all args
+- Check root: if [ "$EUID" -ne 0 ]; then echo "Run as root"; exit 1; fi
+- Check package: dpkg -s <pkg> &> /dev/null && echo "installed"
+
+---
+
 ## ✨ What I Learned
 
 1. **For/while loops automate repetitive tasks and make scripts powerful.**
