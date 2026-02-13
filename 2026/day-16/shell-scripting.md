@@ -206,6 +206,14 @@ Skipped.
 
 ---
 
+### Hints
+- Shebang: #!/bin/bash tells the system which interpreter to use
+- Variables: NAME="Shubham" (no spaces around =)
+- Read: read -p "Enter name: " NAME
+- If syntax: if [ condition ]; then ... elif ... else ... fi
+- File check: if [ -f filename ]; then
+
+---
 ## 🧾 What I Learned
 
 1. **The shebang line is critical for defining the script interpreter and ensuring portability.**
