@@ -218,5 +218,3 @@ chmod -x script.sh
 3. **Setting permissions prevents accidental or malicious file changes, ensuring safe teamwork.**
 
 ---
-
-<!-- Add screenshots for permission changes and errors as per challenge requirements -->
