@@ -207,7 +207,6 @@ Last login: Thu Feb  5 10:30:45 2026 from 49.123.45.67
 ubuntu@ip-172-31-32-10:~$
 ```
 
-**📸 Screenshot this terminal showing successful SSH connection!**
 
 ---
 
@@ -693,7 +692,6 @@ Commercial support is available at nginx.com.
 Thank you for using nginx.
 ```
 
-**📸 Screenshot this page - you'll need it for submission!**
 
 ---
 
@@ -934,7 +932,6 @@ ls -lh nginx-logs.txt
 cat nginx-logs.txt
 ```
 
-**📸 Screenshot showing the contents of nginx-logs.txt!**
 
 ---
 
@@ -1132,9 +1129,6 @@ sudo nano /var/www/html/index.html
 sudo systemctl reload nginx
 ```
 
-**Visit your website again!**
-
-**📸 Screenshot your custom page!**
 
 ---
 
@@ -1382,16 +1376,6 @@ sudo bash -c 'tail -50 /var/log/nginx/error.log >> nginx-logs.txt'
 # Download Logs
 scp -i my-devops-key.pem ubuntu@54.123.45.67:~/nginx-logs.txt .
 ```
-
-### Screenshots
-1. **SSH Connection Successful**
-   ![SSH Screenshot](screenshot-ssh.png)
-
-2. **Nginx Welcome Page in Browser**
-   ![Nginx Screenshot](screenshot-nginx.png)
-
-3. **Log File Contents**
-   ![Logs Screenshot](screenshot-logs.png)
 
 ### Challenges Faced
 
