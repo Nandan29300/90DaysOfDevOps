@@ -87,12 +87,6 @@ id testuser12
 
 ---
 
-### 6. **Screenshot Example**
-
-<!-- Paste a screenshot of any rerun command’s output here to show proof of hands-on. -->
-
----
-
 ## 🤔 Mini Self-Check
 
 - **Which 3 commands save you the most time right now, and why?**
