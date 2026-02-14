@@ -192,5 +192,3 @@ ls -l /opt/team-workspace
 - Group permissions make teamwork smooth & secure.
 
 ---
-
-<!-- Add your screenshots below this line as per submission requirements -->
