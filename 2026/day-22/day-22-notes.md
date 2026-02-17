@@ -53,6 +53,51 @@ Date:   Mon Feb 17 20:51:00 2026 +0530
 
 ---
 
+## Task 2 – Create Your Git Project
+
+### 1. Create project directory and enter it
+```bash
+mkdir devops-git-practice
+cd devops-git-practice
+```
+
+### 2. Initialize a new git repository
+```bash
+git init
+```
+*Output:*
+```
+Initialized empty Git repository in /path/to/devops-git-practice/.git/
+```
+
+### 3. Check git status
+```bash
+git status
+```
+*Output:*
+```
+On branch master
+
+No commits yet
+
+nothing to commit (create/copy files and use "git add" to track)
+```
+**Interpretation:**  
+Git is waiting for you to create and add files.
+
+### 4. Explore .git directory
+To see all files including hidden ones:
+```bash
+ls -a
+```
+To look inside .git:
+```bash
+ls .git
+```
+*You’ll see folders like objects/, refs/, and files like HEAD, config, etc. All your project’s version control data is stored here.*
+
+---
+
 ## Tips & Points to Remember
 
 - The **staging area** (index) gives you granular control: stage parts of files or specific files for smaller, meaningful commits.
