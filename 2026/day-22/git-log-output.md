@@ -1,6 +1,5 @@
 # Output: git log --oneline
 
-Sample (your hashes/messages will differ):
 
 ```
 e4a5c7a Add compact history view command
