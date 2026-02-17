@@ -49,7 +49,7 @@ Date:   Mon Feb 17 20:51:00 2026 +0530
 
 ## 6. `git log --oneline` output screenshot
 
-*See the attached image file `git-log-screenshot.png` in this folder.*
+*See the attached image file `git-log-output.md` in this folder.*
 
 ---
 
