@@ -11,7 +11,7 @@ Cloud Engineering, as I understand, involves using cloud platforms like AWS to h
 ## 3. Why I Am Starting This Journey  
 I am learning DevOps because I want to move toward a more technical, automation-driven, and high-impact role. I am interested in building systems, improving deployment processes, and working with modern cloud-native technologies. I also see DevOps as a strong career path with growing industry demand.
 
-## 4. My 3 Goals for the Next 90 Days  
+## 4. My 4 Goals for the Next 90 Days  
 1. Gain strong hands-on knowledge of Linux, Git, and Docker by working on real tasks.  
 2. Build and deploy an application on AWS with proper CI/CD automation.  
 3. Deploy and manage a basic application using Kubernetes and understand its core concepts.
