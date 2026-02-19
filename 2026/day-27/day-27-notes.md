@@ -67,7 +67,7 @@ Selected 6 pinned repos that best represent my work:
 
 ---
 
-### 3 Things Improved
+### 2 Things Improved
 
 1. **Added 90-days-of-devops repo and pinned it** — Created a dedicated repo for the challenge with a clear folder structure by day. Pinned it so visitors immediately see the active learning project.
 
