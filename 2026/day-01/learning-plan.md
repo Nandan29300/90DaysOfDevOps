@@ -27,7 +27,7 @@ I am learning DevOps because I want to move toward a more technical, automation-
 - **Weekends:** 4–6 hours per day (This is for sure.... I will dedicate my weekends to learning and practicing DevOps skills. Even kai functions, marriages last month se meine chod diye :-< ) 
 
 ## 7. How I Will Stay Consistent  
-- I will **TRY** tofollow a fixed daily study schedule after work.  
+- I will **TRY** to follow a fixed daily study schedule after work.  
 - I will focus on hands-on practice rather than only watching tutorials.  
 - I will take notes and document what I learn.  
 - I will track my weekly progress and adjust my plan if needed.  
