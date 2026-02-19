@@ -15,7 +15,7 @@ I am learning DevOps because I want to move toward a more technical, automation-
 1. Gain strong hands-on knowledge of Linux, Git, and Docker by working on real tasks.  
 2. Build and deploy an application on AWS with proper CI/CD automation.  
 3. Deploy and manage a basic application using Kubernetes and understand its core concepts.
-4. Be recognized as a DevOps Hero in TrainWithShubham community.
+4. Be recognized as a **DevOps Hero** in TrainWithShubham community.
 
 ## 5. 3 Core DevOps Skills I Will Build  
 - Linux administration and troubleshooting  
