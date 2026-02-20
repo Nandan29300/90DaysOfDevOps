@@ -434,7 +434,7 @@ The rule is simple: **never work directly on `main`; always branch, then merge v
 
 | Area | Most Important Lesson |
 |------|-----------------------|
-| **Linux** | Everything is a file; understand permissions, processes, and systemd and you can debug almost anything |
+| **Linux** | Everything in Linux is either a file or Directory (folder); understand permissions, processes, and systemd and you can debug almost anything |
 | **Docker & Nginx** | Docker isolates apps in containers; Nginx is the go-to reverse proxy — together they are the foundation of most web deployments (Day 5 & 8) |
 | **Shell Scripting** | Always use `set -euo pipefail`; use absolute paths in cron jobs; log everything |
 | **LVM** | Three layers: PV → VG → LV; real power is online resizing |
