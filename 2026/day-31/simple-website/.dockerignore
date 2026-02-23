@@ -1,0 +1,6 @@
+# Exclude files/folders from build context
+node_modules
+.git
+*.md
+.env
+.DS_Store

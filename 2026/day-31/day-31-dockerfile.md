@@ -213,5 +213,21 @@ CMD ["python", "main.py"]
 - `.dockerignore` is vital for clean, secure, small builds!
 - CMD lets users override the command; ENTRYPOINT does not.
 
+
+## Key Takeaways
+
+- **Dockerfiles are the blueprint for images:** Reproducible, automatable, and portable.
+- **Each instruction creates a cached layer:** Order matters. Put frequently-changing commands at the end for faster rebuilds.
+- **CMD vs ENTRYPOINT:**  
+  - Use CMD for a default (can be overridden).  
+  - Use ENTRYPOINT when you always want the same main entry, even if the user adds additional arguments.
+- **.dockerignore is like .gitignore:** Keeps unneeded/secret files OUT of your image. Always use it!
+- **Small images are better:** Start with slim/minimal bases (e.g., Alpine, Python slim).
+- **Practice makes perfect:** Try customizing, breaking, and rebuilding images to truly learn Docker!
+
+
+> **Today’s skill separates Docker “users” from developers who can *ship* production-ready containers!**
+
+
 ---
 
