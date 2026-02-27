@@ -1,0 +1,34 @@
+# Task 3: WordPress + MySQL with data persistence
+
+# WordPress + MySQL, environment, volume
+
+# This sets up a two-container stack.
+# Persistent volume for MySQL.
+# WordPress connects to MySQL via service name (db).
+
+version: '3.8'
+services:
+  db:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wpdb
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD: wppass
+    volumes:
+      - wp-data:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:latest
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: wpdb
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppass
+
+volumes:
+  wp-data:

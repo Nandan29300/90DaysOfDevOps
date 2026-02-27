@@ -1,0 +1,11 @@
+# Task 2: Simple Nginx container:
+
+# Simple Nginx service
+
+# Explains how to start a simple web server with Compose.
+version: '3.8'
+services:
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"

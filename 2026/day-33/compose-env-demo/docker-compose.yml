@@ -1,0 +1,12 @@
+# Task 5: Environment variables demo:
+
+# Compose automatically loads .env and makes ${GREETING} available to containers.
+
+# Demo using env file
+version: '3.8'
+services:
+  demo:
+    image: alpine
+    environment:
+      GREETING: ${GREETING}
+    command: sh -c "echo $GREETING"
