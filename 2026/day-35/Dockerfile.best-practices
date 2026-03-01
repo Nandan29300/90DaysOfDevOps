@@ -1,0 +1,58 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Dockerfile.best-practices  –  Production-ready, security-hardened image
+#
+# Applies all 5 best practices from Task 5:
+#   1. Minimal base image  (alpine)
+#   2. Specific image tags (not "latest")
+#   3. Non-root user       (no privilege escalation risk)
+#   4. Combined RUN layers (fewer layers = smaller image)
+#   5. Static binary       (CGO_ENABLED=0, stripped debug info)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Stage 1: Builder ─────────────────────────────────────────────────────────
+FROM golang:1.22-alpine3.19 AS builder
+
+# Install git (needed by some go modules) — in one RUN to avoid extra layers
+RUN apk add --no-cache git
+
+WORKDIR /app
+
+COPY app/go.mod ./
+RUN go mod download
+
+COPY app/ .
+
+# Static binary, stripped debug symbols
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o server .
+
+
+# ── Stage 2: Runtime ─────────────────────────────────────────────────────────
+# BEST PRACTICE 1: Use a specific pinned tag, never "latest"
+FROM alpine:3.19
+
+# BEST PRACTICE 4: Combine RUN commands into one layer
+# - Update CA certificates (for HTTPS calls inside the container)
+# - Create a non-root group and user
+RUN apk add --no-cache ca-certificates \
+    && addgroup -S appgroup \
+    && adduser  -S appuser -G appgroup
+
+WORKDIR /app
+
+# Copy the binary from the builder
+COPY --from=builder /app/server .
+
+# BEST PRACTICE 3: Change ownership so appuser can execute the binary
+RUN chown appuser:appgroup /app/server
+
+# BEST PRACTICE 2: Switch to the non-root user
+# Any process that runs after this line runs as "appuser", not root
+USER appuser
+
+EXPOSE 8080
+
+CMD ["./server"]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Size: ~14 MB  |  Runs as non-root  |  No compiler, no source code
+# ─────────────────────────────────────────────────────────────────────────────

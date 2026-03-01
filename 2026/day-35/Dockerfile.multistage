@@ -1,0 +1,47 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Dockerfile.multistage  –  MULTI-STAGE build (the correct approach)
+#
+# Stage 1 (builder): Full Go image — compile the binary here.
+# Stage 2 (runtime): Tiny Alpine image — copy ONLY the binary here.
+#
+# The final image has NO Go compiler, NO source code, NO build cache.
+# Result: ~10–15 MB instead of ~850 MB.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Stage 1: Builder ─────────────────────────────────────────────────────────
+# Name this stage "builder" so Stage 2 can reference it with --from=builder
+FROM golang:1.22 AS builder
+
+WORKDIR /app
+
+# Copy module files and download dependencies first (layer cache optimisation)
+COPY app/go.mod ./
+RUN go mod download
+
+# Copy the rest of the source code
+COPY app/ .
+
+# Build a statically linked binary:
+#   CGO_ENABLED=0  → no C dependencies (needed for scratch/alpine target)
+#   GOOS=linux     → target Linux (important when building on macOS/Windows)
+#   -ldflags="-s -w" → strip debug info and symbol table (smaller binary)
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o server .
+
+
+# ── Stage 2: Runtime ─────────────────────────────────────────────────────────
+# alpine:3.19 is ~7 MB — contains just enough OS to run a static binary
+FROM alpine:3.19
+
+WORKDIR /app
+
+# Copy ONLY the compiled binary from the builder stage
+# Everything else (compiler, source, cache) is left behind
+COPY --from=builder /app/server .
+
+EXPOSE 8080
+
+CMD ["./server"]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Expected image size: ~12–15 MB  (binary + Alpine base only)
+# ─────────────────────────────────────────────────────────────────────────────
