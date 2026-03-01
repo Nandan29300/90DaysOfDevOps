@@ -1,0 +1,81 @@
+# =============================================================================
+# docker-compose.yml – Day 34: Real-World 3-Service Stack
+# Services:  web (Flask)  |  db (PostgreSQL)  |  cache (Redis)
+# =============================================================================
+
+services:
+
+  # ── 1. Web Application (Flask) ─────────────────────────────────────────────
+  web:
+    build: ./app                      # Build image from app/Dockerfile
+    container_name: day34_web
+    ports:
+      - "5000:5000"                   # Host:Container port mapping
+    environment:
+      DB_HOST: db
+      DB_NAME: appdb
+      DB_USER: appuser
+      DB_PASSWORD: apppass
+      REDIS_HOST: redis
+    depends_on:
+      db:
+        condition: service_healthy    # Wait until DB passes its healthcheck
+      redis:
+        condition: service_started    # Redis starts fast – no healthcheck needed
+    restart: on-failure               # Restart only if exit code is non-zero
+    networks:
+      - frontend
+      - backend
+    labels:
+      com.day34.service: "web"
+      com.day34.description: "Flask web application"
+
+  # ── 2. Database (PostgreSQL) ───────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: day34_db
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: apppass
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # Named volume – data survives restarts
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d appdb"]
+      interval: 10s      # Check every 10 seconds
+      timeout: 5s        # Fail if no response in 5 seconds
+      retries: 5         # Mark unhealthy after 5 consecutive failures
+      start_period: 10s  # Grace period before first check
+    restart: always      # Always restart – DB must never stay down
+    networks:
+      - backend
+    labels:
+      com.day34.service: "db"
+      com.day34.description: "PostgreSQL 16 database"
+
+  # ── 3. Cache (Redis) ───────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: day34_redis
+    restart: always
+    networks:
+      - backend
+    labels:
+      com.day34.service: "cache"
+      com.day34.description: "Redis 7 in-memory cache"
+
+# =============================================================================
+# Named Volumes
+# =============================================================================
+volumes:
+  pgdata:
+    name: day34_pgdata   # Explicit name so it's easy to find with `docker volume ls`
+
+# =============================================================================
+# Custom Networks
+# =============================================================================
+networks:
+  frontend:
+    name: day34_frontend   # web is exposed here (could add nginx load-balancer)
+  backend:
+    name: day34_backend    # db & redis are ONLY on this internal network
