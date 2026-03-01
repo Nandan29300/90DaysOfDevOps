@@ -1,0 +1,76 @@
+# =============================================================================
+# docker-compose.yml – Day 36: Task Manager API
+# Services:  api (Node/Express)  |  db (PostgreSQL 16)  |  cache (Redis 7)
+# =============================================================================
+
+services:
+
+  # ── 1. API (Node.js / Express) ─────────────────────────────────────────────
+  api:
+    build:
+      context: ./app          # Build from app/Dockerfile
+      dockerfile: Dockerfile
+    container_name: day36_api
+    image: nandan29300/day36-taskapi:latest   # tag used when pushing to Hub
+    ports:
+      - "${PORT:-3000}:3000"
+    env_file: .env            # Load all variables from .env file
+    depends_on:
+      db:
+        condition: service_healthy   # Wait until Postgres healthcheck passes
+      cache:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - frontend
+      - backend
+    labels:
+      com.day36.service: "api"
+      com.day36.description: "Node.js Express Task Manager API"
+
+  # ── 2. Database (PostgreSQL 16) ────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: day36_db
+    env_file: .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data    # Named volume — data persists
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-taskuser} -d ${POSTGRES_DB:-taskdb}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: always           # DB must never stay down
+    networks:
+      - backend
+    labels:
+      com.day36.service: "db"
+      com.day36.description: "PostgreSQL 16 database"
+
+  # ── 3. Cache (Redis 7) ─────────────────────────────────────────────────────
+  cache:
+    image: redis:7-alpine
+    container_name: day36_redis
+    restart: always
+    networks:
+      - backend
+    labels:
+      com.day36.service: "cache"
+      com.day36.description: "Redis 7 in-memory cache"
+
+# =============================================================================
+# Named Volumes
+# =============================================================================
+volumes:
+  pgdata:
+    name: day36_pgdata
+
+# =============================================================================
+# Custom Networks
+# =============================================================================
+networks:
+  frontend:
+    name: day36_frontend     # api exposed here — could add nginx/traefik
+  backend:
+    name: day36_backend      # db & redis internal-only, not reachable from outside

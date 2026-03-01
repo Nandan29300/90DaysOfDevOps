@@ -1,0 +1,29 @@
+# Files and folders to EXCLUDE from the Docker build context
+# Smaller build context = faster builds
+
+# Version control
+.git
+.gitignore
+
+# Dependencies (will be installed fresh inside the container)
+node_modules
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files (never bake secrets into the image!)
+.env
+.env.*
+
+# Documentation
+*.md
+README*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor config
+.vscode
+.idea
