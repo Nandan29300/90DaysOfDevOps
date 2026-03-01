@@ -1,8 +1,5 @@
 # Day 36 – Docker Project: Dockerize a Full Application
 
-**Date:** 1 March 2026  
-**Author:** Nandan
-
 ---
 
 ## Task 1: App Choice — Task Manager REST API
