@@ -1,0 +1,68 @@
+name: Manual Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment to deploy to"
+        required: true
+        default: "staging"
+        type: choice
+        options:
+          - staging
+          - production
+      version:
+        description: "Version or tag to deploy (e.g. v1.2.0)"
+        required: false
+        default: "latest"
+        type: string
+      dry_run:
+        description: "Perform a dry run without actual deployment"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Print deployment inputs
+        run: |
+          echo "=============================="
+          echo " DEPLOYMENT CONFIGURATION"
+          echo "=============================="
+          echo "Environment : ${{ github.event.inputs.environment }}"
+          echo "Version     : ${{ github.event.inputs.version }}"
+          echo "Dry run     : ${{ github.event.inputs.dry_run }}"
+          echo "Triggered by: ${{ github.actor }}"
+          echo "=============================="
+
+      - name: Validate environment
+        run: |
+          ENV="${{ github.event.inputs.environment }}"
+          if [ "$ENV" = "production" ]; then
+            echo "⚠️  WARNING: Deploying to PRODUCTION"
+            echo "Ensure all staging checks have passed before continuing."
+          else
+            echo "Deploying to STAGING — safe to proceed."
+          fi
+
+      - name: Simulate deployment
+        run: |
+          DRY="${{ github.event.inputs.dry_run }}"
+          ENV="${{ github.event.inputs.environment }}"
+          VER="${{ github.event.inputs.version }}"
+          if [ "$DRY" = "true" ]; then
+            echo "DRY RUN MODE — no changes will be made"
+            echo "Would deploy version $VER to $ENV"
+          else
+            echo "Deploying version $VER to $ENV..."
+            echo "Deployment complete ✅"
+          fi

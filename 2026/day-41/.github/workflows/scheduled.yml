@@ -1,0 +1,34 @@
+name: Scheduled Health Check
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * *"   # Every day at midnight UTC
+  workflow_dispatch:        # Allow manual trigger for testing
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Print trigger type
+        run: echo "Workflow triggered by: ${{ github.event_name }}"
+
+      - name: Print current UTC time
+        run: |
+          echo "Current UTC time:"
+          date -u
+
+      - name: Simulate health check
+        run: |
+          echo "Running scheduled health check..."
+          echo "Checking application endpoints..."
+          echo "All systems operational ✅"
+
+      - name: Print completion message
+        run: echo "Scheduled check completed at $(date -u)"
