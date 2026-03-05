@@ -1,0 +1,21 @@
+# person.yaml — Day 38: YAML Basics (Tasks 1 & 2)
+# Describes a DevOps learner using key-value pairs, booleans, and lists
+
+# ── Task 1: Key-Value Pairs ───────────────────────────────────────────────────
+name: Nandan
+role: DevOps Engineer
+experience_years: 2
+learning: true            # boolean — no quotes; "true" (with quotes) is a string
+
+# ── Task 2: Lists ─────────────────────────────────────────────────────────────
+
+# Block style list — each item on its own line, prefixed with a dash
+tools:
+  - Docker
+  - Kubernetes
+  - Git
+  - Linux
+  - Terraform
+
+# Inline (flow) style list — all items on one line inside square brackets
+hobbies: [coding, reading, open-source, hiking, gaming]

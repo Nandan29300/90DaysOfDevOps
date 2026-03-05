@@ -1,0 +1,35 @@
+# server.yaml — Day 38: YAML Basics (Tasks 3 & 4)
+# Demonstrates nested objects and multi-line strings
+
+# ── Task 3: Nested Objects ────────────────────────────────────────────────────
+
+server:
+  name: prod-web-01
+  ip: 192.168.1.100
+  port: 443
+
+database:
+  host: db.internal
+  name: appdb
+  credentials:
+    user: appuser
+    password: "s3cr3t!pass"   # quotes needed — contains special characters
+
+# ── Task 4: Multi-line Strings ────────────────────────────────────────────────
+
+# | (literal block scalar) — preserves ALL newlines exactly as written
+# Use this for shell scripts, config files, SQL — anything where line breaks matter
+startup_script: |
+  #!/bin/bash
+  set -euo pipefail
+  echo "Starting server..."
+  systemctl start nginx
+  systemctl start postgresql
+  echo "All services started."
+
+# > (folded block scalar) — folds newlines into spaces (single long line at runtime)
+# Use this for long description strings, prose, URLs — where line breaks are just wrapping
+server_description: >
+  This is the primary production web server.
+  It handles all inbound HTTPS traffic,
+  terminates TLS, and proxies requests to the backend API pool.
