@@ -1,0 +1,39 @@
+name: Self-Hosted Runner Demo
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  run-on-self-hosted:
+    # Task 5: uses both the built-in label AND the custom label
+    runs-on: [self-hosted, my-linux-runner]
+
+    steps:
+      - name: Print hostname
+        run: hostname
+
+      - name: Print working directory
+        run: pwd
+
+      - name: Print current user
+        run: whoami
+
+      - name: Print runner OS and architecture
+        run: uname -a
+
+      - name: Create a proof file
+        run: |
+          echo "Job ran at $(date) on $(hostname)" > /tmp/day42-self-hosted-proof.txt
+          cat /tmp/day42-self-hosted-proof.txt
+
+      - name: Verify proof file exists
+        run: |
+          if [ -f /tmp/day42-self-hosted-proof.txt ]; then
+            echo "✅ Proof file exists on the self-hosted machine"
+          else
+            echo "❌ Proof file not found"
+            exit 1
+          fi

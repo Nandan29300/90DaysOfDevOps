@@ -1,0 +1,36 @@
+name: Explore Pre-installed Tools
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  explore-ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print Docker version
+        run: docker --version
+
+      - name: Print Python version
+        run: python3 --version
+
+      - name: Print Node version
+        run: node --version
+
+      - name: Print Git version
+        run: git --version
+
+      - name: Print Java version
+        run: java --version
+
+      - name: Print Go version
+        run: go version
+
+      - name: Print runner architecture
+        run: uname -m
+
+      - name: Print available disk space
+        run: df -h /
