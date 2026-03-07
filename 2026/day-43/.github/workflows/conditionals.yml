@@ -1,0 +1,52 @@
+name: Conditionals Demo
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # Task 4.3: This job only runs on push events, not pull_request
+  push-only-job:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: Confirm this is a push event
+        run: echo "✅ This job only runs on push — event was: ${{ github.event_name }}"
+
+  conditionals-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Always runs
+        run: echo "This step always runs regardless of branch or event"
+
+      # Task 4.1: Step that only runs on main branch
+      - name: Run only on main branch
+        if: github.ref == 'refs/heads/main'
+        run: echo "✅ On main branch — ${{ github.ref }}"
+
+      - name: Run only on non-main branches
+        if: github.ref != 'refs/heads/main'
+        run: echo "ℹ️  On feature branch — ${{ github.ref }} (not main)"
+
+      # Task 4.4: continue-on-error — step fails but job continues
+      - name: Intentionally failing step (continue-on-error)
+        id: risky-step
+        continue-on-error: true
+        run: |
+          echo "Attempting risky operation..."
+          exit 1
+
+      - name: This runs even though the previous step failed
+        run: echo "✅ Job continued past the failed step because of continue-on-error"
+
+      # Task 4.2: Step that only runs when the PREVIOUS step failed
+      - name: Run only when risky-step failed
+        if: steps.risky-step.outcome == 'failure'
+        run: |
+          echo "⚠️  risky-step failed — running recovery/notification step"
+          echo "Outcome was: ${{ steps.risky-step.outcome }}"
+
+      - name: Run only when risky-step succeeded
+        if: steps.risky-step.outcome == 'success'
+        run: echo "risky-step passed — no recovery needed"

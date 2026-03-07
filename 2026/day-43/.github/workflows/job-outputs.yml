@@ -1,0 +1,48 @@
+name: Job Outputs Demo
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  producer:
+    runs-on: ubuntu-latest
+
+    # Declare the outputs this job will expose to other jobs
+    outputs:
+      build-date: ${{ steps.set-date.outputs.date }}
+      build-id: ${{ steps.set-id.outputs.build_id }}
+
+    steps:
+      - name: Set today's date as output
+        id: set-date
+        run: |
+          TODAY=$(date -u +"%Y-%m-%d")
+          echo "date=$TODAY" >> $GITHUB_OUTPUT
+          echo "Date captured: $TODAY"
+
+      - name: Set a build ID as output
+        id: set-id
+        run: |
+          BUILD_ID="build-${{ github.run_number }}-${{ github.sha }}"
+          echo "build_id=$BUILD_ID" >> $GITHUB_OUTPUT
+          echo "Build ID: $BUILD_ID"
+
+  consumer:
+    runs-on: ubuntu-latest
+    needs: producer
+
+    steps:
+      - name: Read outputs from producer job
+        run: |
+          echo "=== Outputs from producer job ==="
+          echo "Build date  : ${{ needs.producer.outputs.build-date }}"
+          echo "Build ID    : ${{ needs.producer.outputs.build-id }}"
+
+      - name: Use the output in logic
+        run: |
+          echo "Deploying build ${{ needs.producer.outputs.build-id }}"
+          echo "Built on     ${{ needs.producer.outputs.build-date }}"
+          echo "✅ Consumer job complete"

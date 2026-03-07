@@ -1,0 +1,45 @@
+name: Environment Variables Demo
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# Level 1: Workflow-level env var — available to ALL jobs and steps
+env:
+  APP_NAME: myapp
+
+jobs:
+  show-env-vars:
+    runs-on: ubuntu-latest
+
+    # Level 2: Job-level env var — available to all steps in this job
+    env:
+      ENVIRONMENT: staging
+
+    steps:
+      - name: Print all three levels of env vars
+        # Level 3: Step-level env var — available only in this step
+        env:
+          VERSION: 1.0.0
+        run: |
+          echo "=== Environment Variables ==="
+          echo "Workflow-level  APP_NAME    : $APP_NAME"
+          echo "Job-level       ENVIRONMENT : $ENVIRONMENT"
+          echo "Step-level      VERSION     : $VERSION"
+
+      - name: Verify step-level var is not visible here
+        run: |
+          echo "APP_NAME is still visible    : $APP_NAME"
+          echo "ENVIRONMENT is still visible : $ENVIRONMENT"
+          echo "VERSION from previous step   : '${VERSION}' (empty — step scope ended)"
+
+      - name: Print GitHub context variables
+        run: |
+          echo "=== GitHub Context ==="
+          echo "Commit SHA : ${{ github.sha }}"
+          echo "Actor      : ${{ github.actor }}"
+          echo "Ref        : ${{ github.ref }}"
+          echo "Event      : ${{ github.event_name }}"
+          echo "Repo       : ${{ github.repository }}"
