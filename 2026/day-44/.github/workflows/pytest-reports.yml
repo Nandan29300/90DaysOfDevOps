@@ -1,0 +1,49 @@
+name: Pytest with Real Reports
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  pytest-demo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pytest + report plugins
+        run: pip install pytest pytest-html
+
+      - name: Run pytest — generate HTML + JUnit XML reports
+        run: |
+          pytest day-44/scripts/test_pytest_demo.py \
+            -v \
+            --html=day-44/reports/pytest-report.html \
+            --self-contained-html \
+            --junit-xml=day-44/reports/junit-report.xml
+        # -v             = verbose output (shows each test name + pass/fail)
+        # --html         = generates a visual HTML report you can open in browser
+        # --self-contained-html = single file (no extra CSS/JS files needed)
+        # --junit-xml    = machine-readable XML (used by GitHub, Jenkins, etc.)
+
+      - name: Upload HTML report as artifact
+        if: always()   # upload even if tests fail — so you can read the report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-html-report-${{ github.run_number }}
+          path: day-44/reports/pytest-report.html
+          retention-days: 7
+
+      - name: Upload JUnit XML report as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-junit-xml-${{ github.run_number }}
+          path: day-44/reports/junit-report.xml
+          retention-days: 7

@@ -1,0 +1,44 @@
+name: Upload Artifacts Demo
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  # Task 3: Generate a file and upload it as an artifact
+  generate-and-upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate test report
+        run: |
+          mkdir -p reports
+          echo "=== Test Report ===" > reports/test-report.txt
+          echo "Date       : $(date -u)" >> reports/test-report.txt
+          echo "Runner     : ${{ runner.os }}" >> reports/test-report.txt
+          echo "Commit     : ${{ github.sha }}" >> reports/test-report.txt
+          echo "Branch     : ${{ github.ref_name }}" >> reports/test-report.txt
+          echo "Actor      : ${{ github.actor }}" >> reports/test-report.txt
+          echo "" >> reports/test-report.txt
+          echo "Tests run   : 10" >> reports/test-report.txt
+          echo "Tests passed: 10" >> reports/test-report.txt
+          echo "Tests failed: 0" >> reports/test-report.txt
+          echo "Status      : ✅ ALL PASSED" >> reports/test-report.txt
+          cat reports/test-report.txt
+
+      - name: Generate build log
+        run: |
+          echo "Build started  : $(date -u)" > reports/build.log
+          echo "Compiling app..." >> reports/build.log
+          echo "Compiled 42 files in 1.3s" >> reports/build.log
+          echo "Build finished : $(date -u)" >> reports/build.log
+          echo "Status         : SUCCESS" >> reports/build.log
+
+      - name: Upload test report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report-${{ github.run_number }}
+          path: reports/
+          retention-days: 7

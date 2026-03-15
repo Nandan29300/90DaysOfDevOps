@@ -1,0 +1,53 @@
+name: Caching Demo
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  # Task 6: Cache pip dependencies — run twice to observe the time difference
+  install-with-cache:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        id: pip-cache
+        with:
+          # Cache the pip download cache directory
+          path: ~/.cache/pip
+          # Key: if requirements.txt changes, the cache is invalidated
+          key: ${{ runner.os }}-pip-${{ hashFiles('day-44/scripts/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Print cache status
+        run: |
+          if [ "${{ steps.pip-cache.outputs.cache-hit }}" = "true" ]; then
+            echo "✅ Cache HIT — packages restored from cache (fast path)"
+          else
+            echo "ℹ️  Cache MISS — downloading packages fresh (will be cached for next run)"
+          fi
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pytest black flake8
+
+      - name: Verify installed packages
+        run: |
+          pip list | grep -E "requests|pytest|black|flake8"
+          echo "✅ All packages ready"
+
+      - name: Run a quick check
+        run: python -c "import requests, pytest; print('Imports OK ✅')"
