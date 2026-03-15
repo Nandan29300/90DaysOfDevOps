@@ -1,0 +1,43 @@
+name: Setup and Greet
+description: A composite action that prints a greeting in the given language and exposes a greeted output.
+
+inputs:
+  name:
+    description: Name of the person or service to greet
+    required: true
+  language:
+    description: Language for the greeting (en, es, fr, hi, de)
+    required: false
+    default: en
+
+outputs:
+  greeted:
+    description: Set to true after the greeting is printed
+    value: ${{ steps.greet.outputs.greeted }}
+
+runs:
+  using: composite
+
+  steps:
+    # ── Step 1: Print greeting in the requested language ──────────────────────
+    - name: Print greeting
+      id: greet
+      shell: bash
+      run: |
+        case "${{ inputs.language }}" in
+          es) echo "¡Hola, ${{ inputs.name }}! 👋" ;;
+          fr) echo "Bonjour, ${{ inputs.name }} ! 👋" ;;
+          hi) echo "नमस्ते, ${{ inputs.name }}! 👋" ;;
+          de) echo "Hallo, ${{ inputs.name }}! 👋" ;;
+          *)  echo "Hello, ${{ inputs.name }}! 👋" ;;
+        esac
+        echo "greeted=true" >> "$GITHUB_OUTPUT"
+
+    # ── Step 2: Print runtime context ─────────────────────────────────────────
+    - name: Print context
+      shell: bash
+      run: |
+        echo "Date      : $(date -u)"
+        echo "Runner OS : ${{ runner.os }}"
+        echo "Repo      : ${{ github.repository }}"
+        echo "Actor     : ${{ github.actor }}"

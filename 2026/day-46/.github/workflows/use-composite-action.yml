@@ -1,0 +1,50 @@
+name: Use Composite Action
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  greet:
+    name: Run composite action demo
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ── Task 5: Use the local composite action ────────────────────────────
+      - name: Greet in English (default)
+        id: greet-en
+        uses: ./.github/actions/setup-and-greet
+        with:
+          name: "GitHub Actions"
+
+      - name: Greet in Spanish
+        id: greet-es
+        uses: ./.github/actions/setup-and-greet
+        with:
+          name: "DevOps Engineer"
+          language: es
+
+      - name: Greet in Hindi
+        id: greet-hi
+        uses: ./.github/actions/setup-and-greet
+        with:
+          name: "Nandan"
+          language: hi
+
+      # ── Verify the output was set correctly ───────────────────────────────
+      - name: Check greeted output
+        run: |
+          echo "greeted (EN): ${{ steps.greet-en.outputs.greeted }}"
+          echo "greeted (ES): ${{ steps.greet-es.outputs.greeted }}"
+          echo "greeted (HI): ${{ steps.greet-hi.outputs.greeted }}"
+          if [ "${{ steps.greet-en.outputs.greeted }}" = "true" ]; then
+            echo "✅ Composite action output verified"
+          else
+            echo "❌ Composite action output missing"
+            exit 1
+          fi
