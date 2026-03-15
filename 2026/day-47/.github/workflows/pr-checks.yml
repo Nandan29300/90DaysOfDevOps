@@ -1,0 +1,107 @@
+name: PR Quality Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  # ── Job 1: Reject oversized files ──────────────────────────────────────────
+  file-size-check:
+    name: File size check (max 1 MB)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0     # full history so we can compare against base
+
+      - name: Check for files > 1 MB
+        run: |
+          LIMIT_BYTES=1048576   # 1 MB in bytes
+          FAILED=0
+
+          # List files changed in this PR compared to the base branch
+          echo "Checking files changed in this PR..."
+          while IFS= read -r file; do
+            # Skip deleted files (they won't exist in the working tree)
+            [ -f "$file" ] || continue
+            SIZE=$(stat -c%s "$file")
+            if [ "$SIZE" -gt "$LIMIT_BYTES" ]; then
+              echo "❌ OVERSIZED: $file  ($(( SIZE / 1024 )) KB — limit is 1024 KB)"
+              FAILED=1
+            else
+              echo "✅ OK: $file  ($(( SIZE / 1024 )) KB)"
+            fi
+          done < <(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+
+          if [ "$FAILED" -eq 1 ]; then
+            echo ""
+            echo "One or more files exceed the 1 MB size limit."
+            echo "Consider using Git LFS for large assets."
+            exit 1
+          fi
+
+          echo "All changed files are within the 1 MB limit."
+
+  # ── Job 2: Enforce branch naming convention ─────────────────────────────────
+  branch-name-check:
+    name: Branch name convention check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate branch name
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          echo "Branch name: $BRANCH"
+
+          # Allowed patterns: feature/*, fix/*, docs/*, chore/*, refactor/*
+          if echo "$BRANCH" | grep -Eq '^(feature|fix|docs|chore|refactor)/.+'; then
+            echo "✅ Branch name follows convention: $BRANCH"
+          else
+            echo "❌ Invalid branch name: '$BRANCH'"
+            echo ""
+            echo "Branch names must follow one of these patterns:"
+            echo "  feature/<description>"
+            echo "  fix/<description>"
+            echo "  docs/<description>"
+            echo "  chore/<description>"
+            echo "  refactor/<description>"
+            echo ""
+            echo "Examples:"
+            echo "  feature/add-login-page"
+            echo "  fix/null-pointer-crash"
+            echo "  docs/update-readme"
+            exit 1
+          fi
+
+  # ── Job 3: Warn if PR description is empty (soft check — never fails) ───────
+  pr-body-check:
+    name: PR description check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check PR body
+        run: |
+          BODY="${{ github.event.pull_request.body }}"
+          if [ -z "$BODY" ]; then
+            echo "⚠️  WARNING: This PR has no description."
+            echo "Please add context about what this PR does and why."
+            echo "A good PR description helps reviewers and future readers."
+            echo ""
+            echo "Suggested sections:"
+            echo "  ## What changed"
+            echo "  ## Why"
+            echo "  ## Testing done"
+            echo ""
+            echo "This check is advisory only — it will not block the merge."
+          else
+            echo "✅ PR description found (${#BODY} characters)"
+          fi
+          # Always exit 0 — this is a warning, not a hard gate
+          exit 0

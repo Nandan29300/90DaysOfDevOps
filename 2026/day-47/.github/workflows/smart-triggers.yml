@@ -1,0 +1,56 @@
+name: Smart Path & Branch Triggers
+
+on:
+  push:
+    # ── Only trigger when application code changes ───────────────────────────
+    branches:
+      - main
+      - 'release/**'
+    paths:
+      - 'src/**'
+      - 'app/**'
+      - 'day-45/app/**'
+      - 'day-46/**'
+
+  pull_request:
+    branches:
+      - main
+      - 'release/**'
+    # Skip runs triggered purely by documentation changes
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+      - '**/README.md'
+      - '.github/CODEOWNERS'
+      - 'LICENSE'
+
+  workflow_dispatch:
+
+jobs:
+  smart-build:
+    name: Smart build (path-filtered)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Print trigger info
+        run: |
+          echo "Event       : ${{ github.event_name }}"
+          echo "Branch      : ${{ github.ref_name }}"
+          echo "Commit SHA  : ${{ github.sha }}"
+          echo ""
+          echo "This workflow only runs when src/, app/, or day-4x/ files change."
+          echo "It is SKIPPED entirely when only .md or docs/ files are modified."
+
+      - name: Detect changed paths
+        run: |
+          echo "Changed files in this push:"
+          git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "(first commit or no previous ref)"
+
+      - name: Build step (placeholder)
+        run: |
+          echo "✅ Path filter matched — running build"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Trigger: ${{ github.event_name }}"

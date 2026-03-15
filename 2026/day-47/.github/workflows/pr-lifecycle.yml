@@ -1,0 +1,45 @@
+name: PR Lifecycle Events
+
+on:
+  pull_request:
+    branches:
+      - main
+    # Listen to every meaningful PR activity type
+    types:
+      - opened        # PR first created
+      - synchronize   # New commit pushed to the PR branch
+      - reopened      # PR was closed and then re-opened
+      - closed        # PR closed (merged OR dismissed)
+
+jobs:
+  lifecycle:
+    name: PR event – ${{ github.event.action }}
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── Print which lifecycle event fired ───────────────────────────────────
+      - name: Print event context
+        run: |
+          echo "Event action  : ${{ github.event.action }}"
+          echo "PR number     : #${{ github.event.pull_request.number }}"
+          echo "PR title      : ${{ github.event.pull_request.title }}"
+          echo "PR author     : ${{ github.event.pull_request.user.login }}"
+          echo "Source branch : ${{ github.head_ref }}"
+          echo "Target branch : ${{ github.base_ref }}"
+          echo "Merged        : ${{ github.event.pull_request.merged }}"
+
+      # ── Step that only runs when the PR is actually merged (not just closed) ─
+      - name: Post-merge actions
+        if: github.event.action == 'closed' && github.event.pull_request.merged == true
+        run: |
+          echo "✅ PR #${{ github.event.pull_request.number }} was MERGED into ${{ github.base_ref }}"
+          echo "Merged by : ${{ github.event.pull_request.merged_by.login }}"
+          echo "Merge SHA : ${{ github.event.pull_request.merge_commit_sha }}"
+          echo "This is where you would trigger a deployment or send a notification."
+
+      # ── Step that runs only when the PR is closed WITHOUT merging ───────────
+      - name: PR closed without merge
+        if: github.event.action == 'closed' && github.event.pull_request.merged == false
+        run: |
+          echo "⚠️  PR #${{ github.event.pull_request.number }} was CLOSED without merging."
+          echo "Author: ${{ github.event.pull_request.user.login }}"

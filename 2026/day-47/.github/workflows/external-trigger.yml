@@ -1,0 +1,68 @@
+name: External Trigger (repository_dispatch)
+
+# repository_dispatch lets external systems trigger workflows via the GitHub API.
+# It will NOT appear in the triggers list for push/PR — it is API-only.
+on:
+  repository_dispatch:
+    event-types:
+      - deploy-request
+      - rollback-request
+      - smoke-test-request
+
+jobs:
+  handle-external-event:
+    name: Handle ${{ github.event.action }}
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── Print what the external system sent ──────────────────────────────────
+      - name: Print dispatch context
+        run: |
+          echo "Event type        : ${{ github.event.action }}"
+          echo "Sender            : ${{ github.actor }}"
+          echo "Repo              : ${{ github.repository }}"
+          echo ""
+          echo "=== Client Payload ==="
+          echo "environment : ${{ github.event.client_payload.environment }}"
+          echo "version     : ${{ github.event.client_payload.version }}"
+          echo "requester   : ${{ github.event.client_payload.requester }}"
+
+      # ── Route to the correct handler based on event type ─────────────────────
+      - name: Handle deploy-request
+        if: github.event.action == 'deploy-request'
+        run: |
+          ENV="${{ github.event.client_payload.environment }}"
+          VER="${{ github.event.client_payload.version }}"
+          echo "🚀 Deploy request received"
+          echo "   Environment : ${ENV:-unknown}"
+          echo "   Version     : ${VER:-latest}"
+          echo ""
+          echo "Simulating deployment to ${ENV}..."
+          echo "✅ Deploy to ${ENV} triggered successfully"
+
+      - name: Handle rollback-request
+        if: github.event.action == 'rollback-request'
+        run: |
+          echo "⏪ Rollback request received"
+          echo "   Environment : ${{ github.event.client_payload.environment }}"
+          echo "   Rollback to : ${{ github.event.client_payload.version }}"
+          echo "Simulating rollback..."
+          echo "✅ Rollback triggered successfully"
+
+      - name: Handle smoke-test-request
+        if: github.event.action == 'smoke-test-request'
+        run: |
+          echo "🔬 Smoke test request received"
+          echo "   Environment : ${{ github.event.client_payload.environment }}"
+          echo "Simulating smoke tests..."
+          echo "✅ Smoke tests passed"
+
+      - name: Summary
+        run: |
+          echo "## repository_dispatch Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Key | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-----|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Event type  | \`${{ github.event.action }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Environment | \`${{ github.event.client_payload.environment }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Triggered at | $(date -u) |" >> "$GITHUB_STEP_SUMMARY"

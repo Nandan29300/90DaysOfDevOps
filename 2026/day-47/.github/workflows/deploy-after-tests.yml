@@ -1,0 +1,68 @@
+name: Deploy After Tests
+
+# Trigger: fires only when the "Run Tests" workflow finishes on the main branch.
+# This is workflow_run — NOT workflow_call. The two are completely different:
+#   workflow_call  → called explicitly by another workflow (like a function call)
+#   workflow_run   → triggered by a workflow completing (like an event listener)
+on:
+  workflow_run:
+    workflows: ["Run Tests"]
+    branches:
+      - main
+    types:
+      - completed
+
+jobs:
+  deploy:
+    name: Deploy (post-test gate)
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── Gate: only proceed if the tests workflow SUCCEEDED ──────────────────
+      - name: Check test workflow result
+        run: |
+          CONCLUSION="${{ github.event.workflow_run.conclusion }}"
+          echo "Triggering workflow : ${{ github.event.workflow_run.name }}"
+          echo "Triggering run ID   : ${{ github.event.workflow_run.id }}"
+          echo "Conclusion          : $CONCLUSION"
+          echo "Head branch         : ${{ github.event.workflow_run.head_branch }}"
+          echo "Head SHA            : ${{ github.event.workflow_run.head_sha }}"
+
+          if [ "$CONCLUSION" != "success" ]; then
+            echo ""
+            echo "❌ Tests did not pass (conclusion: $CONCLUSION)."
+            echo "Deployment blocked — fix the failing tests first."
+            exit 1
+          fi
+
+          echo "✅ Tests passed — proceeding with deployment"
+
+      # ── Checkout the exact commit that was tested (not HEAD) ────────────────
+      - name: Checkout tested commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      # ── Simulate deployment ─────────────────────────────────────────────────
+      - name: Deploy application
+        run: |
+          echo "Deploying commit: ${{ github.event.workflow_run.head_sha }}"
+          echo "Triggered by    : ${{ github.event.workflow_run.name }} run #${{ github.event.workflow_run.run_number }}"
+          echo ""
+          echo "Simulating deployment steps:"
+          echo "  1. Pull latest image from registry..."
+          echo "  2. Run database migrations..."
+          echo "  3. Restart application service..."
+          echo "  4. Verify health endpoint..."
+          echo ""
+          echo "✅ Deployment complete"
+
+      - name: Deployment summary
+        run: |
+          echo "## Deploy After Tests Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Key | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-----|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Tests result | \`${{ github.event.workflow_run.conclusion }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Deployed SHA | \`${{ github.event.workflow_run.head_sha }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Deployed at  | $(date -u) |" >> "$GITHUB_STEP_SUMMARY"

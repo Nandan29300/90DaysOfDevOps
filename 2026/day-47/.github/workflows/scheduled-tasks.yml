@@ -1,0 +1,72 @@
+name: Scheduled Tasks
+
+# Scheduled workflows only run on the default branch (usually main).
+# Add workflow_dispatch so this can be tested manually without waiting.
+on:
+  schedule:
+    # Every Monday at 2:30 AM UTC
+    - cron: '30 2 * * 1'
+    # Every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  scheduled-health-check:
+    name: Health check
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── Which schedule fired? ───────────────────────────────────────────────
+      - name: Print trigger context
+        run: |
+          echo "Trigger type    : ${{ github.event_name }}"
+          echo "Schedule cron   : ${{ github.event.schedule }}"
+          echo "Triggered at    : $(date -u)"
+          echo "Triggered by    : ${{ github.actor }}"
+
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            case "${{ github.event.schedule }}" in
+              "30 2 * * 1") echo "Running: Weekly Monday job (2:30 AM UTC)" ;;
+              "0 */6 * * *") echo "Running: Every-6-hours job" ;;
+              *) echo "Running: Unknown schedule" ;;
+            esac
+          else
+            echo "Running: Manual dispatch"
+          fi
+
+      # ── Health check — using a known-stable public endpoint ─────────────────
+      - name: HTTP health check
+        run: |
+          TARGET_URL="https://httpbin.org/status/200"
+          echo "Checking: $TARGET_URL"
+
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "$TARGET_URL")
+          echo "HTTP response code: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" -eq 200 ]; then
+            echo "✅ Health check PASSED (HTTP $HTTP_CODE)"
+          else
+            echo "❌ Health check FAILED (HTTP $HTTP_CODE)"
+            exit 1
+          fi
+
+      # ── Repo staleness check ────────────────────────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Report last commit age
+        run: |
+          LAST_COMMIT_DATE=$(git log -1 --format="%ci")
+          LAST_COMMIT_SHA=$(git log -1 --format="%h")
+          echo "Last commit : $LAST_COMMIT_SHA"
+          echo "Committed at: $LAST_COMMIT_DATE"
+
+      - name: Scheduled run summary
+        run: |
+          echo "## Scheduled Health Check" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Key | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-----|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Ran at | $(date -u) |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Schedule | \`${{ github.event.schedule }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| HTTP check | ✅ 200 OK |" >> "$GITHUB_STEP_SUMMARY"
