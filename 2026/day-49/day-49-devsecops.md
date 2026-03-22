@@ -43,11 +43,6 @@ Today, you will add security scanning to your CI/CD pipeline using GitHub Action
 
 ---
 
-## Screenshot
-
-> _Paste a screenshot of your pipeline running a Trivy scan here._
-
----
 
 ## Key DevSecOps Principles Applied
 
