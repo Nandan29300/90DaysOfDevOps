@@ -1,0 +1,31 @@
+name: Main Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/day49-capstone-app
+
+jobs:
+  build-test:
+    name: Build & Test
+    uses: ./.github/workflows/reusable-build-test.yml
+    with:
+      node_version: '20'
+      run_tests: true
+
+  docker:
+    name: Docker Build & Push
+    needs: build-test
+    uses: ./.github/workflows/reusable-docker.yml
+    with:
+      image_name: ${{ secrets.DOCKER_USERNAME }}/day49-capstone-app
+      tag: latest
+      sha_tag: sha-${{ github.sha && substring(github.sha, 0, 7) || 'unknown' }}
+      push: true
+    secrets:
+      docker_username: ${{ secrets.DOCKER_USERNAME }}
+      docker_token:    ${{ secrets.DOCKER_TOKEN }}

@@ -1,0 +1,102 @@
+# Reusable – Docker Build & Push (with Trivy)
+
+on:
+  workflow_call:
+    inputs:
+      image_name:
+        description: Full image name (e.g. username/repo)
+        type: string
+        required: true
+      tag:
+        description: Primary image tag (e.g. latest, v1.2.3)
+        type: string
+        required: true
+      sha_tag:
+        description: Short commit SHA tag (e.g. sha-a1b2c3d)
+        type: string
+        required: false
+        default: ''
+      push:
+        description: Whether to push the image to the registry
+        type: boolean
+        required: false
+        default: true
+    secrets:
+      docker_username:
+        required: true
+      docker_token:
+        required: true
+    outputs:
+      image_url:
+        description: Full image URL with primary tag
+        value: ${{ jobs.docker.outputs.image_url }}
+jobs:
+  docker:
+    name: Docker Build & Push (${{ inputs.tag }})
+    runs-on: ubuntu-latest
+    outputs:
+      image_url: ${{ steps.meta.outputs.image_url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Compute image metadata
+        id: meta
+        run: |
+          IMAGE_URL="${{ inputs.image_name }}:${{ inputs.tag }}"
+          echo "image_url=${IMAGE_URL}" >> "$GITHUB_OUTPUT"
+          echo "Image URL: ${IMAGE_URL}"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Log in to Docker Hub
+        if: inputs.push == true
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.docker_username }}
+          password: ${{ secrets.docker_token }}
+      - name: Build tag list
+        id: tags
+        run: |
+          TAGS="${{ inputs.image_name }}:${{ inputs.tag }}"
+          if [ -n "${{ inputs.sha_tag }}" ]; then
+            TAGS="${TAGS},${{ inputs.image_name }}:${{ inputs.sha_tag }}"
+          fi
+          echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
+          echo "Tags to apply: ${TAGS}"
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./day-49/app
+          push: ${{ inputs.push }}
+          tags: ${{ steps.tags.outputs.tags }}
+          build-args: |
+            GIT_SHA=${{ github.sha }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            APP_VERSION=${{ inputs.tag }}
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: '${{ inputs.image_name }}:${{ inputs.tag }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL'
+      - name: Upload Trivy scan report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-report-${{ github.run_number }}
+          path: trivy-results.sarif
+          retention-days: 14
+        continue-on-error: true
+      - name: Docker summary
+        run: |
+          echo "## Docker Build & Push Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Key | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-----|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Image       | \`${{ steps.meta.outputs.image_url }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| All tags    | \`${{ steps.tags.outputs.tags }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Pushed      | \`${{ inputs.push }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Commit SHA  | \`$(echo \"${{ github.sha }}\" | cut -c1-7)\` |" >> "$GITHUB_STEP_SUMMARY"

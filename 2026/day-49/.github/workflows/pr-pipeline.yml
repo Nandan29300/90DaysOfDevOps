@@ -1,0 +1,38 @@
+name: PR Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  build-test:
+    name: Build & Test
+    uses: ./.github/workflows/reusable-build-test.yml
+    with:
+      node_version: '20'
+      run_tests: true
+
+  pr-comment:
+    name: PR checks summary
+    runs-on: ubuntu-latest
+    needs: build-test
+    steps:
+      - name: Print PR summary
+        run: |
+          echo "## PR Pipeline Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Check | Result |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Build & Test | ✅ ${{ needs.build-test.outputs.test_result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Docker push  | ⏭️ skipped on PRs |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Branch:** \`${{ github.head_ref }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "**PR:** #${{ github.event.pull_request.number }} – ${{ github.event.pull_request.title }}" >> "$GITHUB_STEP_SUMMARY"
+      - name: Print to job log
+        run: |
+          echo "Build & Test: ${{ needs.build-test.outputs.test_result }}"
+          echo "Docker push: skipped on PRs"
