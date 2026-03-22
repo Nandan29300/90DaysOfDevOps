@@ -53,12 +53,6 @@
 
 ---
 
-## 5. Screenshot
-
-> _Paste a screenshot of your `kubectl get nodes` output here._
-
----
-
 ## 6. Diagram: Kubernetes Architecture
 
 ```
