@@ -1,0 +1,74 @@
+name: Reusable – Build & Test
+
+on:
+  workflow_call:
+    inputs:
+      node_version:
+        description: Node.js version to use
+        type: string
+        required: false
+        default: '20'
+      run_tests:
+        description: Whether to run the test suite
+        type: boolean
+        required: false
+        default: true
+
+    outputs:
+      test_result:
+        description: "'passed' if all tests succeeded, 'failed' otherwise"
+        value: ${{ jobs.build-test.outputs.test_result }}
+
+jobs:
+  build-test:
+    name: Build & Test (Node ${{ inputs.node_version }})
+    runs-on: ubuntu-latest
+
+    outputs:
+      test_result: ${{ steps.run-tests.outputs.test_result }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ inputs.node_version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+          cache: npm
+          cache-dependency-path: day-48/app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: day-48/app
+        run: npm ci
+
+      - name: Run tests
+        id: run-tests
+        if: inputs.run_tests == true
+        working-directory: day-48/app
+        run: |
+          if node tests/test.js; then
+            echo "test_result=passed" >> "$GITHUB_OUTPUT"
+            echo "✅ All tests passed"
+          else
+            echo "test_result=failed" >> "$GITHUB_OUTPUT"
+            echo "❌ Tests failed"
+            exit 1
+          fi
+
+      - name: Skip tests notice
+        if: inputs.run_tests == false
+        run: |
+          echo "test_result=skipped" >> "$GITHUB_OUTPUT"
+          echo "ℹ️  Tests skipped (run_tests=false)"
+
+      - name: Build summary
+        run: |
+          echo "## Build & Test Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Key | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-----|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Node version | \`${{ inputs.node_version }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Tests run    | \`${{ inputs.run_tests }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Test result  | \`${{ steps.run-tests.outputs.test_result }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Commit       | \`$(echo "${{ github.sha }}" | cut -c1-7)\` |" >> "$GITHUB_STEP_SUMMARY"

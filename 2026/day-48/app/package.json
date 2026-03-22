@@ -1,0 +1,13 @@
+{
+  "name": "day48-capstone-app",
+  "version": "1.0.0",
+  "description": "Day 48 GitHub Actions capstone – minimal Node/Express app",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test":  "node tests/test.js"
+  },
+  "dependencies": {
+    "express": "^4.18.3"
+  }
+}

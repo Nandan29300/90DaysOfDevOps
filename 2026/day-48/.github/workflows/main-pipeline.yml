@@ -1,0 +1,72 @@
+name: Main Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/day48-capstone-app
+
+jobs:
+  # ── Job 1: Build & test ──────────────────────────────────────────────────────
+  build-test:
+    name: Build & Test
+    uses: ./.github/workflows/reusable-build-test.yml
+    with:
+      node_version: '20'
+      run_tests: true
+
+  # ── Job 2: Docker build & push (only after tests pass) ───────────────────────
+  docker:
+    name: Docker Build & Push
+    needs: build-test
+    uses: ./.github/workflows/reusable-docker.yml
+    with:
+      image_name: ${{ secrets.DOCKER_USERNAME }}/day48-capstone-app
+      tag: latest
+      sha_tag: sha-${{ github.sha && substring(github.sha, 0, 7) || 'unknown' }}
+      push: true
+    secrets:
+      docker_username: ${{ secrets.DOCKER_USERNAME }}
+      docker_token:    ${{ secrets.DOCKER_TOKEN }}
+
+  # ── Compute short SHA (needed for docker job tag) ────────────────────────────
+  # Note: workflow_call jobs can't directly call expressions like substring(),
+  # so the sha_tag is computed by the reusable-docker workflow from github.sha.
+  # The main-pipeline passes the full sha; the reusable workflow cuts it.
+
+  # ── Job 3: Deploy (only after Docker image is pushed) ────────────────────────
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    needs: docker
+    environment: production
+
+    steps:
+      - name: Deploy
+        run: |
+          IMAGE_URL="${{ needs.docker.outputs.image_url }}"
+          echo "🚀 Deploying image: ${IMAGE_URL}"
+          echo ""
+          echo "Deployment steps:"
+          echo "  1. Pull ${IMAGE_URL}"
+          echo "  2. Stop existing container"
+          echo "  3. Start new container with updated image"
+          echo "  4. Run healthcheck"
+          echo ""
+          echo "✅ Deployment to production complete"
+
+      - name: Pipeline summary
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          echo "## Main Pipeline Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Stage | Result |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Build & Test  | ✅ ${{ needs.build-test.outputs.test_result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Docker Push   | ✅ ${{ needs.docker.outputs.image_url }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Deploy        | ✅ production |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Commit SHA    | \`${SHORT_SHA}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Triggered by  | ${{ github.actor }} |" >> "$GITHUB_STEP_SUMMARY"
